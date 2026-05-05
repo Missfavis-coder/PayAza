@@ -1,4 +1,4 @@
-import { ApiResponse, ErrorResponse } from "./type";
+import { ApiResponse, ErrorResponse } from "./types";
 
 export const isFormData = (body: unknown): body is FormData => {
   return typeof FormData !== "undefined" && body instanceof FormData;

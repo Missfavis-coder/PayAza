@@ -1,5 +1,6 @@
 import { AxiosResponse } from 'axios';
-import { ApiError, ErrorInterceptor, RequestConfig, RequestInterceptor, ResponseInterceptor } from "./type";
+import { ApiError, ErrorInterceptor, RequestConfig, RequestInterceptor, ResponseInterceptor } from "./types";
+import { getCookie } from "cookies-next";
 import { normalizeHeaders } from "./utils";
 
 class InterceptorManager {
@@ -47,7 +48,7 @@ class InterceptorManager {
 export const interceptorManager = new InterceptorManager();
 
 interceptorManager.addRequestInterceptor((config: RequestConfig) => {
-  const accessToken = localStorage.getItem("token");
+  const accessToken = getCookie('tekcify_access_token');
   if (accessToken && typeof accessToken === 'string') {
     const headers = normalizeHeaders(config.headers);
     headers['Authorization'] = `Bearer ${accessToken}`;
