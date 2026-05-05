@@ -14,9 +14,8 @@ import { useAuth } from "@/lib/hooks/use-auth";
 
 const page = () => {
   const { user, isLoading } = useAuth();
-  console.log(user)
+  console.log(user);
   const router = useRouter();
-  
 
   return (
     <div className="flex bg-background flex-1 flex-col">
@@ -34,11 +33,12 @@ const page = () => {
               </p>
             </div>
           </div>
-          <div className="px-4 space-y-4">
-            <StatsCards/>
-            <ActionRail/>
-            <ChartAreaInteractive/>
-            <RecentTable/>
+          <div className="px-4 ">
+            <StatsCards />
+            <div className="px-2.25 space-y-7 pt-3">
+              <ChartAreaInteractive />
+              <RecentTable />
+            </div>
           </div>
         </div>
       </div>

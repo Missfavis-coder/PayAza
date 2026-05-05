@@ -9,6 +9,7 @@ import { WalletCard } from "./_components/wallet-cards";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { ActionRail } from "@/components/layouts/dashboard/action-buttons";
 
 export default function Page() {
   const router = useRouter();
@@ -160,7 +161,7 @@ export default function Page() {
       <header>
         <h1 className="text-2xl font-bold">Wallet & Funding</h1>
       </header>
-
+      <ActionRail />
       <div className="grid gap-8">
         {/* LEFT */}
         <div className="flex flex-col sm:flex-row lg:gap-6 gap-3">

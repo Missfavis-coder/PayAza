@@ -18,8 +18,6 @@ import { WithdrawModal } from "./withdraw";
 const actions = [
   { label: "Tap", icon: ScanLine },
   { label: "Scan", icon: QrCode },
-  { label: "Username", icon: User },
-  { label: "Phone", icon: Phone },
   { label: "Fund", icon: Plus },
   { label: "Withdraw", icon: ArrowDownToLine },
 ];
