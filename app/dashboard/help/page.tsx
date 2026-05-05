@@ -49,12 +49,13 @@ export default function HelpPage() {
 
         <CardContent>
           <div className="relative">
-            <Input
+            <input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
                onMouseEnter={() => setFocused(true)}
               onBlur={() => setTimeout(() => setFocused(false), 150)}
               placeholder="Search payments, transfers, account issues..."
+              className="outline-none border-neutral-900 border w-full rounded-md p-3 focus:ring-1 focus:ring-[#00CF7B]"
             />
 
             {/* DROPDOWN */}

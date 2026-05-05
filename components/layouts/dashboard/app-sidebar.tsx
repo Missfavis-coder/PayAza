@@ -46,6 +46,11 @@ const navMain = [
     icon: CreditCard,
   },
   {
+    title: "Notification",
+    url: "/dashboard/notification",
+    icon: Bell,
+  },
+  {
     title: "Settings",
     url: "/dashboard/settings",
     icon: Users,
