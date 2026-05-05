@@ -225,7 +225,7 @@ useEffect(() => {
           <Button
             variant="ghost"
             size="sm"
-            className="text-muted-foreground text-[9px] md:text-[10px] font-bold uppercase tracking-widest shrink-0 hover:bg-transparent hover:text-muted-foreground cursor-pointer"
+            className="text-muted-foreground text-[9px] md:text-[10px] font-bold uppercase tracking-widest shrink-0 hover:bg-transparent hover:text-muted-foreground cursor-pointeclie"
           >
             Filter
           </Button>

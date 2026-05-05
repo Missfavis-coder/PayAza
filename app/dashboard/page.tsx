@@ -9,10 +9,14 @@ import { StatsCards } from "@/components/layouts/dashboard/stats-card";
 import { ActionRail } from "@/components/layouts/dashboard/action-buttons";
 import { ChartAreaInteractive } from "@/components/layouts/dashboard/charts";
 import { RecentTable } from "@/components/layouts/dashboard/recent-transactions";
+import { useAuth } from "@/lib/hooks/use-auth";
 ///import { redirectToIntegration } from "@/lib/utils/redirect";
 
 const page = () => {
+  const { user, isLoading } = useAuth();
+  console.log(user)
   const router = useRouter();
+  
 
   return (
     <div className="flex bg-background flex-1 flex-col">
@@ -22,7 +26,7 @@ const page = () => {
             <div className="flex-1 min-w-0">
               <h1 className="md:text-xl text-lg font-medium gap-1 md:gap-2 flex flex-wrap items-center">
                 <span className="text-sm md:text-base">
-                  Welcome Back, Adeshola !!
+                  Welcome Back, {user?.name ?? "User"} !!
                 </span>
               </h1>
               <p className="text-muted-foreground text-xs md:text-sm mt-1">

@@ -44,6 +44,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  phone?: string;      // Optional since it might not always be returned
+  role?: string; 
 
 }
 
