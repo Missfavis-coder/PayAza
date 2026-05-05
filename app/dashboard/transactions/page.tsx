@@ -43,14 +43,14 @@ const StatusBadge = ({ status }: { status: Transaction["status"] }) => {
           status === "Successful"
             ? "bg-emerald-500"
             : status === "Pending"
-            ? "bg-amber-500"
-            : "bg-red-500"
+              ? "bg-amber-500"
+              : "bg-red-500",
         )}
       />
       <span
         className={cn(
           "text-[10px] font-bold uppercase tracking-widest",
-          colors[status]
+          colors[status],
         )}
       >
         {status}
@@ -61,12 +61,72 @@ const StatusBadge = ({ status }: { status: Transaction["status"] }) => {
 
 const BillingContent = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true);
+    const [transactions, setTransactions] = useState<Transaction[]>([]);
+const mockTransactions: Transaction[] = [
+  {
+    id: "TXN-10001",
+    date: "2026-05-01",
+    credits: "1,500",
+    amount: "$15.00",
+    status: "Successful",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10002",
+    date: "2026-05-02",
+    credits: "3,000",
+    amount: "$30.00",
+    status: "Pending",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10003",
+    date: "2026-05-02",
+    credits: "800",
+    amount: "$8.00",
+    status: "Failed",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10004",
+    date: "2026-05-03",
+    credits: "5,000",
+    amount: "$50.00",
+    status: "Successful",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10005",
+    date: "2026-05-04",
+    credits: "2,200",
+    amount: "$22.00",
+    status: "Successful",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10006",
+    date: "2026-05-04",
+    credits: "1,000",
+    amount: "$10.00",
+    status: "Pending",
+    invoiceUrl: "#",
+  },
+  {
+    id: "TXN-10007",
+    date: "2026-05-05",
+    credits: "4,500",
+    amount: "$45.00",
+    status: "Successful",
+    invoiceUrl: "#",
+  },
+];
   const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(
-    null
+    null,
   );
   const itemsPerPage = 7;
   //const queryClient = useQueryClient();
-  
+
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -76,20 +136,29 @@ const BillingContent = () => {
   const paymentId = searchParams.get("payment_id");
 
   const [showSuccessModal, setShowSuccessModal] = useState(isSuccess);
+ 
 
-//  useEffect(() => {
-   // if (isSuccess) {
-   //   queryClient.invalidateQueries({
-       // queryKey: queryKeys.dashboard.billing.overview(),
-    //  });
-    //  queryClient.invalidateQueries({
-    //    queryKey: queryKeys.dashboard.billing.transactions(),
-    //  });
-    //  queryClient.invalidateQueries({
-     //   queryKey: queryKeys.dashboard.overview(),
-    //  });
-   // }
- // }, [isSuccess, queryClient]);
+useEffect(() => {
+  const t = setTimeout(() => {
+    setTransactions(mockTransactions);
+    setLoading(false);
+  }, 1500);
+
+  return () => clearTimeout(t);
+}, []);
+  //  useEffect(() => {
+  // if (isSuccess) {
+  //   queryClient.invalidateQueries({
+  // queryKey: queryKeys.dashboard.billing.overview(),
+  //  });
+  //  queryClient.invalidateQueries({
+  //    queryKey: queryKeys.dashboard.billing.transactions(),
+  //  });
+  //  queryClient.invalidateQueries({
+  //   queryKey: queryKeys.dashboard.overview(),
+  //  });
+  // }
+  // }, [isSuccess, queryClient]);
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
@@ -98,11 +167,12 @@ const BillingContent = () => {
     params.delete("payment_id");
     params.delete("status");
     router.replace(
-      `/dashboard/billing${params.toString() ? `?${params.toString()}` : ""}`
+      `/dashboard/billing${params.toString() ? `?${params.toString()}` : ""}`,
     );
   };
 
   const handleDownloadInvoice = async (transactionId: string) => {
+    
     try {
       setDownloadingInvoice(transactionId);
       const response = await fetch(`/api/invoice/${transactionId}`);
@@ -122,33 +192,31 @@ const BillingContent = () => {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-     // toast.error(
-    //    error instanceof Error ? error.message : "Failed to download invoice"
-     // );
+      // toast.error(
+      //    error instanceof Error ? error.message : "Failed to download invoice"
+      // );
     } finally {
       setDownloadingInvoice(null);
     }
   };
 
- // const billingInfo = data?.credits;
- // const creditAvailable = billingInfo?.available ?? 0;
- // const usedThisMonth = billingInfo?.usedThisMonth ?? 0e,
+  // const billingInfo = data?.credits;
+  // const creditAvailable = billingInfo?.available ?? 0;
+  // const usedThisMonth = billingInfo?.usedThisMonth ?? 0e,
 
- // const transactions = useMemo(
- //   () => transactionsResponse?.data ?? [],
- //   [transactionsResponse]
-//  );
+  // const transactions = useMemo(
+  //   () => transactionsResponse?.data ?? [],
+  //   [transactionsResponse]
+  //  );
 
-//  const totalPages = Math.ceil(transactions?.length / itemsPerPage);
- // const currentItems = transactions.slice(
- //   (currentPage - 1) * itemsPerPage,
- //   currentPage * itemsPerPage
-//  );
+  //  const totalPages = Math.ceil(transactions?.length / itemsPerPage);
+  // const currentItems = transactions.slice(
+  //   (currentPage - 1) * itemsPerPage,
+  //   currentPage * itemsPerPage
+  //  );
 
   return (
     <div className="p-6 lg:p-10 md:space-y-12 space-y-10 w-full pb-8 md:pb-12">
-
-
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-2">
           <h2 className="text-base md:text-xl font-bold text-foreground">
@@ -163,10 +231,7 @@ const BillingContent = () => {
           </Button>
         </div>
 
-        <Card
-          className="border-border bg-background overflow-hidden"
-          
-        >
+        <Card className="border-border bg-background overflow-hidden">
           <Table className="[&_tr:nth-child(even)]:bg-transparent [&_tr:nth-child(odd)]:bg-transparent whitespace-nowrap">
             <TableHeader className="bg-muted/30">
               <TableRow className="hover:bg-transparent border-border">
@@ -187,61 +252,45 @@ const BillingContent = () => {
                 </TableHead>
               </TableRow>
             </TableHeader>
-            <TableBody>
-                <TableRow>
-                  <TableCell
-                    colSpan={5}
-                    className="text-center py-20 text-muted-foreground"
-                  >
-                    <div className="flex flex-col items-center gap-2">
-                      <p>No transactions found</p>
-                    </div>
-                  </TableCell>
-                </TableRow>
-{/** 
-              {currentItems.map((transaction) => (
-                <TableRow
-                  key={transaction.id}
-                  className="border-border bg-transparent hover:bg-white/[0.01] transition-colors"
-                >
-                  <TableCell className="text-muted-foreground font-medium text-xs md:text-sm">
-                    {transaction.date}
-                  </TableCell>
-                  <TableCell>
-                    <span className="font-bold text-foreground text-xs md:text-sm">
-                      {formatCredits(transaction.credits)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="font-medium text-muted-foreground text-xs md:text-sm">
-                    {transaction.amount}
-                  </TableCell>
-                  <TableCell>
-                    <StatusBadge status={transaction.status} />
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-8 w-8 p-0 rounded-lg hover:bg-muted text-muted-foreground hover:text-foreground transition-all"
-                      onClick={() => handleDownloadInvoice(transaction.id)}
-                      disabled={downloadingInvoice === transaction.id}
-                    >
-                      {downloadingInvoice === transaction.id ? (
-                        <div className="h-4 w-4 border-2 border-zinc-500 border-t-transparent rounded-full animate-spin" />
-                      ) : (
-                        <FiDownload className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}  */}
-            </TableBody>
+<TableBody>
+  {loading ? (
+    Array.from({ length: 5 }).map((_, i) => (
+      <TableSkeletonRow key={i} />
+    ))
+  ) : transactions.length > 0 ? (
+    transactions.map((transaction) => (
+      <TableRow key={transaction.id}>
+        <TableCell>{transaction.date}</TableCell>
+
+        <TableCell className="font-medium">
+          {transaction.credits}
+        </TableCell>
+
+        <TableCell>{transaction.amount}</TableCell>
+
+        <TableCell>
+          <StatusBadge status={transaction.status} />
+        </TableCell>
+
+        <TableCell className="text-right">
+          <Button variant="ghost" size="sm">
+            <Download size={16} />
+          </Button>
+        </TableCell>
+      </TableRow>
+    ))
+  ) : (
+    <TableRow>
+      <TableCell colSpan={5} className="text-center py-20 text-muted-foreground">
+        No transactions found
+      </TableCell>
+    </TableRow>
+  )}
+</TableBody>
           </Table>
 
           <div className="p-4 border-t border-border md:flex items-center justify-between bg-white/[0.01] gap-4 md:space-y-0 space-y-2">
-            <p className="text-[9px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest">
-
-            </p>
+            <p className="text-[9px] md:text-[11px] font-bold text-muted-foreground uppercase tracking-widest"></p>
             <div className="flex items-center gap-2 md:gap-4">
               <Button
                 variant="ghost"
@@ -264,12 +313,37 @@ const BillingContent = () => {
         </Card>
       </div>
 
-    {/**  <PaymentSuccessModal
+      {/**  <PaymentSuccessModal
         isOpen={showSuccessModal}
         onClose={handleCloseSuccessModal}
         paymentId={paymentId}
       />  */}
     </div>
+  );
+};
+const TableSkeletonRow = () => {
+  return (
+    <TableRow className="border-border">
+      <TableCell>
+        <div className="h-4 w-28 bg-white/5 animate-pulse rounded" />
+      </TableCell>
+
+      <TableCell>
+        <div className="h-4 w-24 bg-white/5 animate-pulse rounded" />
+      </TableCell>
+
+      <TableCell>
+        <div className="h-4 w-20 bg-white/5 animate-pulse rounded" />
+      </TableCell>
+
+      <TableCell>
+        <div className="h-4 w-16 bg-white/5 animate-pulse rounded" />
+      </TableCell>
+
+      <TableCell className="text-right">
+        <div className="h-8 w-8 bg-white/5 animate-pulse rounded ml-auto" />
+      </TableCell>
+    </TableRow>
   );
 };
 

@@ -28,7 +28,9 @@ export default function Page() {
   const [fundingData, setFundingData] = useState<null | any>(null);
 
   // EXCHANGE
-  const [exchangeModal, setExchangeModal] = useState<null | "buy" | "sell" | "withdraw">(null);
+  const [exchangeModal, setExchangeModal] = useState<
+    null | "buy" | "sell" | "withdraw"
+  >(null);
   const [inputValue, setInputValue] = useState("");
   const [loadingAction, setLoadingAction] = useState(false);
   const [result, setResult] = useState<any>(null);
@@ -44,15 +46,18 @@ export default function Page() {
       amount: z
         .string()
         .regex(/^\d+$/, "Only numbers allowed")
-        .refine((val) => {
-          const num = Number(val);
-          return type === "buy" ? num >= 100 : num >= 1000;
-        }, {
-          message:
-            type === "buy"
-              ? "Minimum amount is ₦100"
-              : "Minimum is 1,000 points",
-        }),
+        .refine(
+          (val) => {
+            const num = Number(val);
+            return type === "buy" ? num >= 100 : num >= 1000;
+          },
+          {
+            message:
+              type === "buy"
+                ? "Minimum amount is ₦100"
+                : "Minimum is 1,000 points",
+          },
+        ),
     });
 
   // FUND WALLET
@@ -71,6 +76,12 @@ export default function Page() {
       });
       setLoading(false);
     }, 2000);
+  };
+  const handleTransfer = () => {
+    setExchangeModal("buy");
+    setInputValue("");
+    setResult(null);
+    setError(null);
   };
 
   const handleAction = () => {
@@ -145,14 +156,14 @@ export default function Page() {
   };
 
   return (
-    <div className="lg:p-6 py-4 px-2 lg:space-y-12 space-y-6">
+    <div className="lg:p-6 py-4 px-3 lg:space-y-12 space-y-6">
       <header>
         <h1 className="text-2xl font-bold">Wallet & Funding</h1>
       </header>
 
-      <div className="grid  gap-8">
+      <div className="grid gap-8">
         {/* LEFT */}
-        <div className=" space-y-6">
+        <div className="flex flex-col sm:flex-row lg:gap-6 gap-3">
           <WalletCard
             icon={<Plus className="text-cyan-600" size={24} />}
             title="Fund Wallet"
@@ -169,29 +180,13 @@ export default function Page() {
             title="Points Exchange"
             description="Convert between Naira and Points instantly."
             hoverColor="hover:border-blue-500"
-          >
-            <div className="flex gap-2 mt-2">
-              <button
-                onClick={() => {
-                  setExchangeModal("buy");
-                  setInputValue("");
-                  setResult(null);
-                  setError(null);
-                }}
-                className="flex-1 py-3 border rounded-xl font-semibold cursor-pointer"
-              >
-                Transfer
-              </button>
-
-
-            </div>
-
-          </WalletCard>
+            action={{
+              label: "Transfer",
+              onClick: handleInitializeFunding,
+            }}
+          />
         </div>
-
       </div>
-
-
     </div>
   );
 }

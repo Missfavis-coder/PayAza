@@ -27,7 +27,7 @@ export function WalletCard({
 }: WalletCardProps) {
   return (
     <Card
-      className={`group transition-all duration-300 shadow-3px ring-1 ring-neutral-800 ${hoverColor}`}
+      className={`group w-full transition-all duration-300 shadow-3px ring-1 ring-neutral-800 ${hoverColor}`}
     >
       <CardHeader className="flex flex-row justify-between items-start mb-2">
         <div className="p-3 rounded-2xl group-hover:scale-110 transition-transform">
