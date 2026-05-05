@@ -5,6 +5,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Separator } from "@/components/ui/separator";
+import { LogOut } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -86,6 +87,7 @@ export default function SettingsPage() {
                   <Separator />
 
                   <Button variant="destructive" className="w-full">
+                    <LogOut className=" h-4 w-4" />
                     Logout
                   </Button>
                 </>
@@ -189,6 +191,7 @@ function EditProfileModal({ profile }: any) {
               value={form.firstName}
               placeholder={profile.firstName}
               onChange={(e) => handleChange("firstName", e.target.value)}
+              className="mt-1"
             />
           </div>
 
@@ -199,6 +202,7 @@ function EditProfileModal({ profile }: any) {
               value={form.lastName}
               placeholder={profile.lastName}
               onChange={(e) => handleChange("lastName", e.target.value)}
+              className="mt-1"
             />
           </div>
 
@@ -209,6 +213,7 @@ function EditProfileModal({ profile }: any) {
               value={form.userName}
               placeholder={profile.userName}
               onChange={(e) => handleChange("userName", e.target.value)}
+              className="mt-1"
             />
           </div>
 
@@ -229,6 +234,15 @@ function ChangePasswordModal() {
   });
 
   const [error, setError] = useState("");
+  const [show, setShow] = useState({
+    current: false,
+    new: false,
+    confirm: false,
+  });
+
+  const toggle = (key: keyof typeof show) => {
+    setShow((prev) => ({ ...prev, [key]: !prev[key] }));
+  };
 
   const handleChange = (key: string, value: string) => {
     setForm((prev) => ({
@@ -240,17 +254,23 @@ function ChangePasswordModal() {
   };
 
   const validate = () => {
-    if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
+    const { currentPassword, newPassword, confirmPassword } = form;
+
+    if (!currentPassword || !newPassword || !confirmPassword) {
       setError("All fields are required");
       return false;
     }
 
-    if (form.newPassword.length < 6) {
-      setError("New password must be at least 6 characters");
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{6,}$/;
+
+    if (!passwordRegex.test(newPassword)) {
+      setError(
+        "Password must be at least 6 characters and include uppercase, lowercase, and a special character",
+      );
       return false;
     }
 
-    if (form.newPassword !== form.confirmPassword) {
+    if (newPassword !== confirmPassword) {
       setError("Passwords do not match");
       return false;
     }
@@ -282,38 +302,83 @@ function ChangePasswordModal() {
         <DialogHeader>
           <DialogTitle>Change Password</DialogTitle>
         </DialogHeader>
+        {error && (
+          <div
+            role="alert"
+            className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 mt-0.5 shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M12 9v2m0 4h.01M10.29 3.86l-7.07 12.25A1 1 0 004.07 18h15.86a1 1 0 00.85-1.52L13.71 3.86a1 1 0 00-1.72 0z"
+              />
+            </svg>
 
+            <p className="leading-tight">{error}</p>
+          </div>
+        )}
         <div className="space-y-3 mt-2">
           {/* CURRENT PASSWORD */}
-          <Input
-            type="password"
-            placeholder="Current password"
-            value={form.currentPassword}
-            onChange={(e) => handleChange("currentPassword", e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type={show.current ? "text" : "password"}
+              placeholder="Current password"
+              value={form.currentPassword}
+              onChange={(e) => handleChange("currentPassword", e.target.value)}
+              className="pr-10 h-10"
+            />
+            <button
+              type="button"
+              onClick={() => toggle("current")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500"
+            >
+              {show.current ? "Hide" : "Show"}
+            </button>
+          </div>
 
           {/* NEW PASSWORD */}
-          <Input
-            type="password"
-            placeholder="New password"
-            value={form.newPassword}
-            onChange={(e) => handleChange("newPassword", e.target.value)}
-          />
+          <div className="relative">
+            <Input
+              type={show.new ? "text" : "password"}
+              placeholder="New password"
+              value={form.newPassword}
+              onChange={(e) => handleChange("newPassword", e.target.value)}
+              className="pr-10 h-10"
+            />
+            <button
+              type="button"
+              onClick={() => toggle("new")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500"
+            >
+              {show.new ? "Hide" : "Show"}
+            </button>
+          </div>
 
           {/* CONFIRM PASSWORD */}
-          <Input
-            type="password"
-            placeholder="Confirm password"
-            value={form.confirmPassword}
-            onChange={(e) => handleChange("confirmPassword", e.target.value)}
-          />
-
-          {/* ERROR DISPLAY */}
-          {error && <p className="text-xs text-red-400">{error}</p>}
-
-          <Button onClick={handleSubmit} className="w-full">
-            Update Password
-          </Button>
+          <div className="relative">
+            <Input
+              type={show.confirm ? "text" : "password"}
+              placeholder="Confirm password"
+              value={form.confirmPassword}
+              onChange={(e) => handleChange("confirmPassword", e.target.value)}
+              className="pr-10 h-10"
+            />
+            <button
+              type="button"
+              onClick={() => toggle("confirm")}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-xs text-gray-500"
+            >
+              {show.confirm ? "Hide" : "Show"}
+            </button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>
