@@ -15,21 +15,17 @@ export function useAuth(enabled: boolean = true) {
   // GET CURRENT USER
   const meQuery = useQuery({
     queryKey: queryKeys.auth.me(),
+  
     queryFn: async () => {
-      try {
-        const user = await authService.getMe();
-        return user;
-      } catch (error) {
-        // If unauthorized, don't throw to prevent error boundaries
-        if (error instanceof ApiError && error.status === 401) {
-          return null;
-        }
-        throw error;
-      }
+      return await authService.getMe();
+    // Extract the data property from the response
     },
-    enabled,
+  
+    enabled: typeof window !== "undefined",
+  
     staleTime: 5 * 60 * 1000,
     gcTime: 15 * 60 * 1000,
+  
     retry: (failureCount, error) => {
       if (error instanceof ApiError && error.status === 401) return false;
       return failureCount < 2;
@@ -50,8 +46,8 @@ export function useAuth(enabled: boolean = true) {
       router.push("/dashboard");
     },
     onError: (error: any) => {
-      const message = error?.message || "Login failed. Please check your credentials.";
-      toast.error(message);
+       "Login failed. Please check your credentials.";
+      
     },
   });
 
@@ -114,7 +110,7 @@ export function useAuth(enabled: boolean = true) {
   });
 
   return {
-    // User data and auth state
+    
     user: meQuery.data ?? null,
     isAuthenticated: !!meQuery.data,
     isLoading: meQuery.isLoading,

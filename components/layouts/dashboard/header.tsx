@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { LogOut, Settings, CreditCard, Bell } from "lucide-react";
 import Link from "next/link";
+import { useAuth } from "@/lib/hooks/use-auth";
 
 function getInitials(name?: string, givenName?: string, familyName?: string): string {
   if (name) {
@@ -34,6 +35,7 @@ function getInitials(name?: string, givenName?: string, familyName?: string): st
 }
 
 export function SiteHeader() {
+  const {logout} = useAuth();
   const path = usePathname();
   const last = path.split("/")[path.split("/").length - 1];
 
@@ -54,6 +56,49 @@ export function SiteHeader() {
               </span>
             </Button>
           </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={""} />
+                  <AvatarFallback className="text-xs font-semibold">
+                    AO
+                  </AvatarFallback>
+                </Avatar>
+              </Button>
+            </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">Adeshola</p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuGroup>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/settings" className="flex w-full items-center cursor-pointer">
+                  <Settings className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link href="/dashboard/wallet" className="flex w-full items-center cursor-pointer">
+                  <CreditCard className="mr-2 h-4 w-4" />
+                  <span>Wallet</span>
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem 
+              className="text-destructive focus:bg-destructive focus:text-destructive-foreground cursor-pointer"
+              onClick={()=>("")}
+            >
+              <LogOut className="mr-2 h-4 w-4" />
+              <span>Log out</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+          </DropdownMenu>
 
 
         </div>

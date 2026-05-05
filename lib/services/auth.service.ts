@@ -112,8 +112,8 @@ export const authService = {
 
     const result = response.data;
 
-    if (!result.success || !result.data) {
-      throw new Error(result.message || result.error || "Login failed");
+    if ( !result.data) {
+      throw new Error(result.message || "Login failed");
     }
 
     // Store tokens from login response
@@ -144,34 +144,18 @@ export const authService = {
     return result.data.user;
   },
 
-  // GET CURRENT USER - Updated to use stored tokens
   async getMe(): Promise<User | null> {
-    try {
-      const accessToken = tokenStorage.getAccessToken();
-      if (!accessToken) {
-        return null;
-      }
-
-      const response = await axiosInstance.get<
-        BackendTokenResponse<MeResponse>
-      >("/auth/me");
-
-      const result = response.data;
-
-      if (!result.success || !result.data) {
-        return null;
-      }
-
-      return result.data.user;
-    } catch (error) {
-      // If unauthorized, clear tokens
-      if (axios.isAxiosError(error) && error.response?.status === 401) {
-        clearAuthTokens();
-      }
-      return null;
-    }
+    const accessToken = tokenStorage.getAccessToken();
+    if (!accessToken) return null;
+  
+    const response = await axiosInstance.get("/auth/me");
+  
+    const result = response.data;
+  
+    if (!result?.data) return null;
+  
+    return result.data; 
   },
-
   // REFRESH TOKEN - Updated to handle token refresh
   async refreshToken(): Promise<{ accessToken: string; refreshToken: string } | null> {
     try {

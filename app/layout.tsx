@@ -4,6 +4,7 @@ import { Viewport } from "next";
 import { Instrument_Sans } from "next/font/google";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
+import Providers from "@/components/providers/query";
 
 const instrumentSans = Instrument_Sans({
   subsets: ["latin"],
@@ -26,16 +27,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${instrumentSans.variable} `} suppressHydrationWarning>
       <body className={`${instrumentSans.className}`}>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="light"
-            forcedTheme="light"
-            enableSystem={false}
-            disableTransitionOnChange
-          >
+          
+          
+          <Providers> 
+          
+          
+          
+          
               {children}
               <Toaster position="top-center" />
-          </ThemeProvider>
+              </Providers>
       </body>
     </html>
   );
