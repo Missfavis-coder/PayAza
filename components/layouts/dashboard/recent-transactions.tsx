@@ -9,7 +9,7 @@ import {
   import { Gavel } from "lucide-react";
   import { StatusBadge } from "./status-badge";
   
-  export function EscrowTable({ onDispute, onRelease }: any) {
+  export function RecentTable({ onDispute, onRelease }: any) {
     return (
       <div className="rounded-2xl border">
         <Table className="p-4 scrollbar-hide">
