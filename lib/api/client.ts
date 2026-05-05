@@ -4,7 +4,6 @@ import axios, {
   AxiosRequestConfig,
   AxiosResponse,
 } from "axios";
-import { getCookie } from "cookies-next";
 import { getBaseUrl } from "./config";
 import { ApiError, ErrorResponse, RequestConfig } from "./types";
 import { isApiResponse } from "./utils";
@@ -13,12 +12,59 @@ import { authService } from "@/lib/services/auth.service";
 
 const DEFAULT_TIMEOUT = 30000;
 
+// Token storage keys
+const ACCESS_TOKEN_KEY = "nfc_access_token";
+const REFRESH_TOKEN_KEY = "nfc_refresh_token";
+
+// Token management functions
+export const tokenStorage = {
+  getAccessToken: (): string | null => {
+    // Option 1: Memory storage (most secure but lost on refresh)
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(ACCESS_TOKEN_KEY);
+    }
+    return null;
+  },
+  
+  setAccessToken: (token: string): void => {
+    if (typeof window !== "undefined") {
+      sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+    }
+  },
+  
+  getRefreshToken: (): string | null => {
+    if (typeof window !== "undefined") {
+      // Option 2: localStorage for refresh token (persists across tabs)
+      return localStorage.getItem(REFRESH_TOKEN_KEY);
+      // OR use sessionStorage for more security
+      // return sessionStorage.getItem(REFRESH_TOKEN_KEY);
+    }
+    return null;
+  },
+  
+  setRefreshToken: (token: string): void => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem(REFRESH_TOKEN_KEY, token);
+    }
+  },
+  
+  clearTokens: (): void => {
+    if (typeof window !== "undefined") {
+      sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(REFRESH_TOKEN_KEY);
+      // Or if using sessionStorage for both:
+      // sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      // sessionStorage.removeItem(REFRESH_TOKEN_KEY);
+    }
+  },
+};
+
 const axiosInstance: AxiosInstance = axios.create({
   baseURL: getBaseUrl(),
   timeout: DEFAULT_TIMEOUT,
-  withCredentials: true,
 });
 
+// Request interceptor to add token to headers
 axiosInstance.interceptors.request.use(
   async (config) => {
     const requestConfig: RequestConfig = {
@@ -35,25 +81,24 @@ axiosInstance.interceptors.request.use(
       Object.assign(config.headers, processedConfig.headers);
     }
 
+    // Add access token to headers if available
+    const accessToken = tokenStorage.getAccessToken();
+    if (accessToken && config.headers) {
+      config.headers.Authorization = `Bearer ${accessToken}`;
+    }
+
     return config;
   },
   (error) => Promise.reject(error),
 );
 
 let isRefreshing = false;
-let refreshPromise: Promise<boolean> | null = null;
+let refreshPromise: Promise<string | null> | null = null;
 
 const PUBLIC_ROUTES = [
   "/",
-  "/login",
-  "/logins",
-  "/pricing",
-  "/about",
-  "/contact",
-  "/guide",
-  "/privacy",
-  "/terms",
-  "/feedback",
+  "/auth/login",
+  "/logins"
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -66,13 +111,13 @@ function redirectToLogin(): void {
   if (typeof window === "undefined") return;
 
   if (isPublicRoute(window.location.pathname)) {
-    authService.clearAuthCookies();
+    tokenStorage.clearTokens();
     return;
   }
 
-  authService.clearAuthCookies();
+  tokenStorage.clearTokens();
 
-  const loginUrl = new URL("/login", window.location.origin);
+  const loginUrl = new URL("/auth/login", window.location.origin);
   loginUrl.searchParams.set(
     "redirect",
     window.location.pathname + window.location.search,
@@ -86,6 +131,14 @@ axiosInstance.interceptors.response.use(
 
     if (isApiResponse(data)) {
       data = data.data;
+
+      if (data?.success === false) {
+        throw new ApiError(
+          data.message || "Request failed",
+          response.status,
+          data
+        );
+      }
     }
 
     const processedData = await interceptorManager.applyResponseInterceptors(
@@ -113,18 +166,18 @@ axiosInstance.interceptors.response.use(
       if (
         processedError.status === 401 &&
         originalRequest &&
-        !originalRequest._retry
+        !(originalRequest as any)._retry
       ) {
         if (typeof window !== "undefined") {
-          originalRequest._retry = true;
+          (originalRequest as any)._retry = true;
 
-          const refreshToken = getCookie("tekcify_refresh_token");
+          const refreshToken = tokenStorage.getRefreshToken();
           if (!refreshToken) {
             if (isPublicRoute(window.location.pathname)) {
-              authService.clearAuthCookies();
+              tokenStorage.clearTokens();
               return Promise.reject(processedError);
             }
-            authService.clearAuthCookies();
+            tokenStorage.clearTokens();
             const loginUrl = new URL("/login", window.location.origin);
             loginUrl.searchParams.set(
               "redirect",
@@ -135,15 +188,20 @@ axiosInstance.interceptors.response.use(
           }
 
           const retryRequest = () => {
-            if (originalRequest.headers) {
-              delete originalRequest.headers["Authorization"];
+            if ((originalRequest as any).headers) {
+              delete (originalRequest as any).headers["Authorization"];
+            }
+            // Add new access token to the retried request
+            const newAccessToken = tokenStorage.getAccessToken();
+            if (newAccessToken && (originalRequest as any).headers) {
+              (originalRequest as any).headers.Authorization = `Bearer ${newAccessToken}`;
             }
             return axiosInstance.request(originalRequest);
           };
 
           if (isRefreshing && refreshPromise) {
-            return refreshPromise.then((success) => {
-              if (success) {
+            return refreshPromise.then((newAccessToken) => {
+              if (newAccessToken) {
                 return retryRequest();
               }
               redirectToLogin();
@@ -155,18 +213,31 @@ axiosInstance.interceptors.response.use(
           refreshPromise = authService.refreshToken().then(
             (result) => {
               isRefreshing = false;
+              const promise = refreshPromise;
               refreshPromise = null;
-              return !!result;
+              
+              if (result && typeof result === 'object') {
+                // Store the new tokens
+                if ('accessToken' in result && result.accessToken) {
+                  tokenStorage.setAccessToken(result.accessToken);
+                }
+                if ('refreshToken' in result && result.refreshToken) {
+                  tokenStorage.setRefreshToken(result.refreshToken);
+                }
+                // Return the new access token for queue processing
+                return result.accessToken || null;
+              }
+              return null;
             },
             () => {
               isRefreshing = false;
               refreshPromise = null;
-              return false;
+              return null;
             },
           );
 
-          return refreshPromise.then((success) => {
-            if (success) {
+          return refreshPromise.then((newAccessToken) => {
+            if (newAccessToken) {
               return retryRequest();
             }
             redirectToLogin();
@@ -199,7 +270,7 @@ async function request<T>(
     params: config.params,
     timeout: config.timeout,
     signal: config.signal,
-    _retry: config._retry,
+    _retry: (config as any)._retry,
   };
 
   if (config.body) {
@@ -229,6 +300,13 @@ async function request<T>(
   }
 
   const response = await axiosInstance.request<T>(axiosConfig);
+
+  const resData: any = response.data;
+
+  if (resData?.success === false) {
+    throw new ApiError(resData.message || "Request failed", 400);
+  }
+
   return response.data;
 }
 
@@ -277,4 +355,15 @@ export {
 export function resetTokenRefreshQueue(): void {
   isRefreshing = false;
   refreshPromise = null;
+}
+
+// Helper function to set tokens after login
+export function setAuthTokens(accessToken: string, refreshToken: string): void {
+  tokenStorage.setAccessToken(accessToken);
+  tokenStorage.setRefreshToken(refreshToken);
+}
+
+// Helper function to clear tokens on logout
+export function clearAuthTokens(): void {
+  tokenStorage.clearTokens();
 }

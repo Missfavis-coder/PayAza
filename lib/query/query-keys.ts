@@ -8,6 +8,11 @@ import type {
 } from "@/lib/types/api";
 
 export const queryKeys = {
+  auth: {
+    me: () => ["auth", "me"] as const,
+    session: () => ["auth", "session"] as const,
+    refresh: () => ["auth", "refresh"] as const,
+  },
   profile: {
     current: () => ["profile", "current"] as const,
   },
