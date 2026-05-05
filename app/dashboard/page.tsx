@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import { StatsCards } from "@/components/layouts/dashboard/stats-card";
 import { ActionRail } from "@/components/layouts/dashboard/action-buttons";
 import { ChartAreaInteractive } from "@/components/layouts/dashboard/charts";
+import { RecentTable } from "@/components/layouts/dashboard/recent-transactions";
 ///import { redirectToIntegration } from "@/lib/utils/redirect";
 
 const page = () => {
@@ -29,10 +30,11 @@ const page = () => {
               </p>
             </div>
           </div>
-          <div className="px-4">
-            <StatsCards />
-            <ActionRail />
-            <ChartAreaInteractive />
+          <div className="px-4 space-y-4">
+            <StatsCards/>
+            <ActionRail/>
+            <ChartAreaInteractive/>
+            <RecentTable/>
           </div>
         </div>
       </div>

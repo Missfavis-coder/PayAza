@@ -109,7 +109,7 @@ export function ChartAreaInteractive() {
     if (loading) return <ChartSkeleton />
 
   return (
-    <Card className="@container/card mt-4">
+    <Card className="@container/card mt-4 px-2">
       <CardHeader>
         <CardTitle className="font-bold text-neutral-300 ">
           PayAza Wallet Activity
