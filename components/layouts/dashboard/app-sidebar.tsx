@@ -30,61 +30,69 @@ import Navcredits from "./nav-footer";
 import Navsettings from "./nav-footer";
 
 const navMain = [
-    {
-      title: "Home",
-      url: "/dashboard",
-      icon: LayoutDashboardIcon,
-    },
-    {
-      title: "Transactions",
-      url: "/dashboard/transactions",
-      icon: Activity,
-    },
-    {
-      title: "Wallet",
-      url: "/dashboard/wallet",
-      icon: CreditCard,
-    },
-    {
-      title: "Settings",
-      url: "/dashboard/referrals",
-      icon: Users,
-    },
-    {
-      title: "Help & Support",
-      url: "/dashboard/help",
-      icon: Sofa,
-    }
+  {
+    title: "Home",
+    url: "/dashboard",
+    icon: LayoutDashboardIcon,
+  },
+  {
+    title: "Transactions",
+    url: "/dashboard/transactions",
+    icon: Activity,
+  },
+  {
+    title: "Wallet",
+    url: "/dashboard/wallet",
+    icon: CreditCard,
+  },
+  {
+    title: "Settings",
+    url: "/dashboard/settings",
+    icon: Users,
+  },
+  {
+    title: "Help & Support",
+    url: "/dashboard/help",
+    icon: Sofa,
+  },
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, isMobile, setOpenMobile } = useSidebar();
+  const isCollapsed = state === "collapsed";
   return (
     <Sidebar
       className="border-r bg-card relative overflow-hidden"
       collapsible="icon"
       {...props}
     >
-      <div 
+      <div
         className="absolute inset-0 w-full h-full mix-blend-overlay pointer-events-none opacity-[0.05]"
-        style={{ 
-            backgroundImage: 'url(/images/backgrounds/noise.svg)',
-            backgroundSize: '200px 200px'
+        style={{
+          backgroundImage: "url(/images/backgrounds/noise.svg)",
+          backgroundSize: "200px 200px",
         }}
       />
-      <SidebarHeader className="relative z-10 pt-8 pb-6 px-3">
+      <SidebarHeader className="relative  z-10  px-3">
         <div className="flex items-center justify-between">
           <SidebarMenu className="flex-1">
-            <SidebarMenuItem className="flex items-center justify-center">
-              <SidebarMenuButton
-                asChild
-                className="data-[slot=sidebar-menu-button]:!py-6.5 flex items-center pm-3  "
-              >
-                <div>
-                  <div className="bg-[#090D18] text-white  p-3 rounded-md"><WalletCards size={18} /></div>
-                  <span className="text-xl font-bold">PayAza</span>
+            <SidebarMenuItem className="flex items-center py-2 justify-center">
+              <SidebarMenuButton asChild>
+                <div className="flex items-center gap-2">
+                  {/* ICON CHANGES WHEN COLLAPSED */}
+                  <div className="bg-[#090D18] text-white p-3 rounded-md">
+                    {isCollapsed ? (
+                      <WalletCards size={18} />
+                    ) : (
+                      <WalletCards size={18} />
+                    )}
+                  </div>
+
+                  {/* TEXT ONLY WHEN EXPANDED */}
+                  {!isCollapsed && (
+                    <span className="text-xl font-bold">PayAza</span>
+                  )}
                 </div>
-                
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -101,11 +109,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           )}
         </div>
       </SidebarHeader>
-
+      <hr />
       <SidebarContent className="relative z-10 px-3">
         <NavMain items={navMain} />
       </SidebarContent>
-      
+
       <SidebarFooter className="relative z-10 p-4">
         <Navsettings />
       </SidebarFooter>

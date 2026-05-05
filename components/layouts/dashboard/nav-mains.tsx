@@ -24,8 +24,9 @@ export function NavMain({
   }[];
 }) {
   const pathname = usePathname();
-  const { isMobile, setOpenMobile } = useSidebar();
+  const { state, isMobile, setOpenMobile } = useSidebar();
 
+  const isCollapsed = state === "collapsed";
   const handleLinkClick = () => {
     if (isMobile) {
       setOpenMobile(false);
@@ -37,32 +38,34 @@ export function NavMain({
       <SidebarGroupContent className="flex flex-col gap-2">
         <SidebarMenu>
           {items.map((item) => {
-            const isActive =
-              pathname === item.url ||
-              pathname.startsWith(item.url + "/");
+            const isActive = pathname === item.url;
 
             return (
               <SidebarMenuItem key={item.title}>
                 <Link href={item.url} onClick={handleLinkClick}>
-                  <SidebarMenuButton
-                    isActive={isActive}
-                    className={clsx(
-                      "py-5 transition-all duration-200 flex items-center gap-3 rounded-lg mb-2 cursor-pointer",
-                      isActive
-                        ? "border-[#00CF7B]/20 text-white border bg-[#00CF7B]"
-                        : "text-white hover:bg-[#00CF7B]/10"
-                    )}
-                  >
-                    {item.icon && (
-                      <item.icon
-                        className={clsx(
-                          "size-5 transition-colors",
-                          isActive ? "text-[#00CF7B]" : "text-white"
-                        )}
-                      />
-                    )}
-                    <span className="text-sm">{item.title}</span>
-                  </SidebarMenuButton>
+                <div className={clsx( isCollapsed && "-ml-5")}>
+                    <SidebarMenuButton
+                      isActive={isActive}
+                      className={clsx(
+                        "py-5 transition-all duration-200 flex items-center gap-3 rounded-lg mb-2 cursor-pointer",
+                        isActive
+                          ? "border-[#00CF7B]/20 text-white border bg-[#00CF7B]"
+                          : "text-white hover:bg-[#00CF7B]/10",
+                      )}
+                    >
+                      {item.icon && (
+                        <item.icon
+                          className={clsx(
+                            "size-5 transition-colors",
+                            isActive ? "text-[#00CF7B]" : "text-white",
+                          )}
+                        />
+                      )}
+                      {!isCollapsed && (
+                        <span className="text-sm">{item.title}</span>
+                      )}{" "}
+                    </SidebarMenuButton>
+                  </div>
                 </Link>
               </SidebarMenuItem>
             );
