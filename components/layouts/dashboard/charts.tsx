@@ -212,13 +212,13 @@ function ChartSkeleton() {
   return (
     <Card className="@container/card mt-4">
       <CardHeader>
-        <div className="h-5 w-40 bg-white/10 rounded animate-pulse" />
-        <div className="h-3 w-28 bg-white/10 rounded animate-pulse mt-2" />
+        <div className="h-5 w-40 bg-neutral-800 rounded animate-pulse" />
+        <div className="h-3 w-28 bg-neutral-800 rounded animate-pulse mt-2" />
 
         <div className="mt-4 flex gap-2">
-          <div className="h-8 w-24 bg-white/10 rounded animate-pulse" />
-          <div className="h-8 w-24 bg-white/10 rounded animate-pulse" />
-          <div className="h-8 w-24 bg-white/10 rounded animate-pulse" />
+          <div className="h-8 w-24 bg-neutral-800 rounded animate-pulse" />
+          <div className="h-8 w-24 bg-neutral-800 rounded animate-pulse" />
+          <div className="h-8 w-24 bg-neutral-800 rounded animate-pulse" />
         </div>
       </CardHeader>
 

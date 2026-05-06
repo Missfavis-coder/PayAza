@@ -13,34 +13,30 @@ import { cn } from "@/lib/utils";
 
 import { useWalletBalance } from "@/lib/hooks/use-dashboard";
 
-function StatCardSkeleton() {
-  return (
-    <Card className="relative overflow-hidden rounded-xl border border-white/10 bg-black/40 backdrop-blur-md">
+function StatCardSkeleton() {  return (
+    <Card className="relative overflow-hidden rounded-xl border  border-neutral-700 bg-neutral-900 backdrop-blur-md">
       <CardHeader className="p-4">
         <div className="flex justify-between items-start">
-          <div className="h-3 w-24 bg-white/10 rounded animate-pulse" />
-          <div className="h-8 w-8 bg-white/10 rounded-lg animate-pulse" />
+          <div className="h-3 w-24 bg-neutral-800 rounded animate-pulse" />
+          <div className="h-8 w-8 bg-neutral-800 rounded-lg animate-pulse" />
         </div>
 
-        <div className="mt-3 h-6 w-32 bg-white/10 rounded animate-pulse" />
+        <div className="mt-3 h-6 w-32 bg-neutral-800 rounded animate-pulse" />
 
         <div className="mt-3 space-y-2">
-          <div className="h-2 w-full bg-white/10 rounded animate-pulse" />
+          <div className="h-2 w-full bg-neutral-800 rounded animate-pulse" />
         </div>
       </CardHeader>
     </Card>
   );
 }
 
-
 export function StatsCards() {
   const { data, isLoading } = useWalletBalance();
-
 
   const wallet = data?.data?.wallet;
 
   const availableBalance = Number(wallet?.balance ?? 0);
-
 
   const incomingFunds = 0;
   const totalSpent = 0;
@@ -48,13 +44,12 @@ export function StatsCards() {
   return (
     <TooltipProvider>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 px-2">
-
         {isLoading ? (
           <StatCardSkeleton />
         ) : (
           <StatCard
             title="Available Balance"
-            value={`#${availableBalance}`}
+            value={formatToKobo(availableBalance)}
             description="Spendable wallet balance across all payment modes"
             type="cash"
           />
@@ -87,7 +82,6 @@ export function StatsCards() {
     </TooltipProvider>
   );
 }
-
 
 function StatCard({
   title,
@@ -125,13 +119,13 @@ function StatCard({
       className={cn(
         "relative overflow-hidden rounded-xl border backdrop-blur-md",
         "border-white/10 bg-black/40 text-white",
-        "transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl group"
+        "transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl group",
       )}
     >
       <div
         className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition",
-          `bg-gradient-to-br ${config.glow} via-transparent to-transparent`
+          `bg-gradient-to-br ${config.glow} via-transparent to-transparent`,
         )}
       />
 
@@ -150,12 +144,15 @@ function StatCard({
           {value}
         </CardTitle>
 
-        <p className="text-[11px] text-neutral-500 mt-2">
-          {description}
-        </p>
+        <p className="text-[11px] text-neutral-500 mt-2">{description}</p>
       </CardHeader>
 
-      <div className={cn("absolute -right-10 -bottom-10 opacity-[0.04]", config.text)}>
+      <div
+        className={cn(
+          "absolute -right-10 -bottom-10 opacity-[0.04]",
+          config.text,
+        )}
+      >
         <Icon size={160} />
       </div>
     </Card>
