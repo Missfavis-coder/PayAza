@@ -16,18 +16,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/hooks/use-auth";
 
-
-
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
-  const {  user } = useAuth();
 
+  const { logout, isLoggingOut, user } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+  };
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(t);
   }, []);
-
-
 
   return (
     <div className="flex flex-col flex-1 bg-background px-4 md:px-6 py-6 gap-6">
@@ -52,12 +52,12 @@ export default function SettingsPage() {
               {loading ? (
                 <ProfileSkeleton />
               ) : (
-<div className="space-y-3 text-sm">
-        <Row label="Full Name" value={user?.name || "—"} />
-        <Row label="Role" value={user?.role || "—"} />
-        <Row label="Email" value={user?.email || "—"} />
-        <Row label="Phone" value={user?.phone || "—"} />
-      </div>
+                <div className="space-y-3 text-sm">
+                  <Row label="Full Name" value={user?.name || "—"} />
+                  <Row label="Role" value={user?.role || "—"} />
+                  <Row label="Email" value={user?.email || "—"} />
+                  <Row label="Phone" value={user?.phone || "—"} />
+                </div>
               )}
             </CardContent>
           </Card>
@@ -81,7 +81,7 @@ export default function SettingsPage() {
 
                   <Separator />
 
-                  <Button variant="destructive" className="w-full">
+                  <Button onClick={handleLogout} variant="destructive" className="w-full">
                     <LogOut className=" h-4 w-4" />
                     Logout
                   </Button>
@@ -383,12 +383,12 @@ function ProfileSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="h-10 bg-white/5 rounded" />
-        <div className="h-10 bg-white/5 rounded" />
+        <div className="h-10 bg-neutral-800 rounded" />
+        <div className="h-10 bg-neutral-800 rounded" />
       </div>
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 w-40 bg-white/5 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 w-40 bg-neutral-800 rounded" />
     </div>
   );
 }
@@ -396,10 +396,10 @@ function ProfileSkeleton() {
 function SecuritySkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
     </div>
   );
 }
@@ -407,10 +407,10 @@ function SecuritySkeleton() {
 function NotificationSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      <div className="h-6 bg-white/5 rounded" />
-      <div className="h-6 bg-white/5 rounded" />
-      <div className="h-6 bg-white/5 rounded" />
-      <div className="h-6 bg-white/5 rounded" />
+      <div className="h-6 bg-neutral-800 rounded" />
+      <div className="h-6 bg-neutral-800 rounded" />
+      <div className="h-6 bg-neutral-800 rounded" />
+      <div className="h-6 bg-neutral-800 rounded" />
     </div>
   );
 }
@@ -418,10 +418,10 @@ function NotificationSkeleton() {
 function ActionSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
-      <div className="h-10 bg-white/5 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
+      <div className="h-10 bg-neutral-800 rounded" />
     </div>
   );
 }
@@ -429,10 +429,10 @@ function ActionSkeleton() {
 function StatusSkeleton() {
   return (
     <div className="space-y-3 animate-pulse">
-      <div className="h-4 bg-white/5 rounded w-3/4" />
-      <div className="h-4 bg-white/5 rounded w-1/2" />
-      <div className="h-4 bg-white/5 rounded w-2/3" />
-      <div className="h-4 bg-white/5 rounded w-1/3" />
+      <div className="h-4 bg-neutral-800 rounded w-3/4" />
+      <div className="h-4 bg-neutral-800 rounded w-1/2" />
+      <div className="h-4 bg-neutral-800 rounded w-2/3" />
+      <div className="h-4 bg-neutral-800 rounded w-1/3" />
     </div>
   );
 }
