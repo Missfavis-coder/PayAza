@@ -6,7 +6,7 @@ import { PropsWithChildren } from "react";
 
 export default function Page({ children }: PropsWithChildren) {
   return (
-    <SidebarProvider>
+    <SidebarProvider className="dark">
       <AppSidebar variant="sidebar" />
       <SidebarInset className="bg-background flex flex-col h-svh overflow-hidden">
         <SiteHeader/>
