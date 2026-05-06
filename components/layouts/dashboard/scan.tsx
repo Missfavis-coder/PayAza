@@ -27,7 +27,7 @@ export function ScanModal({
         "reader",
         {
           fps: 10,
-          qrbox: { width: 250, height: 250 },
+          qrbox: { width: 240, height: 240 },
         },
         false,
       );
@@ -75,20 +75,18 @@ export function ScanModal({
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-sm p-0 bg-black border-none">
         <div className="relative w-full h-[520px] flex flex-col items-center justify-between py-6">
-          {/* Top Bar */}
+      
           <div className="w-full px-4 flex items-center justify-start"></div>
 
-          {/* Scanner Area */}
           <div className="relative flex flex-col items-center">
-            {/* Scanner Frame */}
+
             <div className="relative w-[260px] h-[260px]">
-              {/* Camera */}
+
               <div
                 id="reader"
-                className="w-full h-full border-0 outline-none rounded-xl overflow-hidden"
+                className="w-full h-full border-0 outline-none rounded-xl overflow-hidden cursor-pointer"
               />
 
-              {/* Overlay corners */}
               <div className="absolute inset-0 pointer-events-none">
                 <div className="absolute top-0 left-0 w-10 h-10 border-t-4 border-l-4 border-green-400 rounded-tl-xl" />
 
@@ -108,13 +106,13 @@ export function ScanModal({
               Scan TapPay QR Code
             </h2>
 
-            <p className="text-white/50 text-sm text-center px-6 mt-1">
+            <p className="text-neutral-300 text-sm text-center px-6 mt-1">
               Align the QR code within the frame to send money instantly
             </p>
           </div>
 
           <div className="w-full px-6">
-            <Button className="w-full bg-green-500 hover:bg-green-600 text-black font-semibold py-3 rounded-xl">
+            <Button className="w-full bg-[#00CF7B] hover:bg-green-500 cursor-pointer text-white font-semibold py-3 rounded-xl">
               Simulate Successful Scan
             </Button>
           </div>

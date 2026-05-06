@@ -97,24 +97,24 @@ export default function SigninPage() {
                     value={payload.email}
                     onChange={handleOnChange}
                     placeholder="Enter your email"
-                    className="h-12 pl-12 pr-4 w-full rounded-xl border border-gray-300 dark:border-neutral-700 text-neutral-500 dark:text-white text-sm outline-none focus:ring-1 focus:border-none focus:ring-cyan-500 transition-all duration-200 bg-white/10"
+                    className="h-12 pl-12 pr-4 w-full rounded-xl border border-neutral-700 text-neutral-500 dark:text-white text-sm outline-none focus:ring-1 focus:border-none focus:ring-[#00CF7B] transition-all duration-200 bg-white/10"
                     autoComplete="off"
                     required
                   />
-                  <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-cyan-500 transition-colors" />
+                  <Mail className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-[#00CF7B] transition-colors" />
                 </div>
               </div>
 
               <div>
                 <div className="relative group">
-                  <Lock className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-cyan-500 transition-colors" />
+                  <Lock className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-neutral-400 group-focus-within:text-[#00CF7B] transition-colors" />
                   <input
                     name="password"
                     type={showPassword ? "text" : "password"}
                     value={payload.password}
                     onChange={handleOnChange}
                     placeholder="Enter your password"
-                    className="h-12 pl-12 pr-12 w-full rounded-xl border border-gray-300 dark:border-neutral-700 text-gray-500 dark:text-white text-sm outline-none focus:ring-1 focus:ring-cyan-500 focus:border-none transition-all duration-200 bg-white/10"
+                    className="h-12 pl-12 pr-12 w-full rounded-xl border border-neutral-700 text-gray-500 dark:text-white text-sm outline-none focus:ring-1 focus:ring-[#00CF7B] focus:border-none transition-all duration-200 bg-white/10"
                     autoComplete="off"
                     required
                   />
@@ -139,16 +139,16 @@ export default function SigninPage() {
                   className="w-4 h-4" 
                   autoComplete="off" 
                 />
-                <span className="text-gray-500 dark:text-neutral-400">Remember me</span>
+                <span className="text-neutral-400 dark:text-neutral-400">Remember me</span>
               </label>
-              <Link href="/forgot-password" className="text-cyan-500 hover:text-cyan-400 font-medium transition-colors">
+              <Link href="/forgot-password" className="text-white hover:text-[#00CF7B] font-medium transition-colors">
                 Forgot password?
               </Link>
             </div>
 
             <button
               type="submit"
-              className="w-full h-12 flex items-center justify-center bg-gradient-to-r from-cyan-500 to-slate-800 hover:opacity-90 text-white font-semibold rounded-full transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full h-12 flex items-center justify-center bg-[#00CF7B] hover:opacity-90 text-white font-semibold rounded-full transition-all duration-200 transform hover:scale-[1.02] active:scale-[0.98] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={isLoggingIn}
             >
               {isLoggingIn ? (

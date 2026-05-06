@@ -72,25 +72,26 @@ export function useAuth(enabled: boolean = true) {
   // LOGOUT MUTATION
   const logoutMutation = useMutation({
     mutationFn: async () => {
-      await authService.logout();
+        if (typeof window === "undefined") return;
+      
+        localStorage.removeItem("nfc_access_token");
+        localStorage.removeItem("nfc_refresh_token");
+        sessionStorage.removeItem("nfc_access_token");
+    
+      
     },
     onSuccess: () => {
       toast.success("Logged out successfully");
-      // Clear all cached queries
-      queryClient.clear();
-      // Redirect to login page
       router.push("/auth/login");
     },
     onError: (error: any) => {
       console.error("Logout error:", error);
-      // Still clear local state and redirect even if API call fails
       queryClient.clear();
       router.push("/auth/login");
       toast.error("Logged out, but there was an issue on the server");
     },
   });
 
-  // REFRESH TOKEN MUTATION (optional - for manual refresh)
   const refreshTokenMutation = useMutation({
     mutationFn: async () => {
       const result = await authService.refreshToken();
@@ -120,6 +121,12 @@ export function useAuth(enabled: boolean = true) {
     // User actions
     refetchUser: meQuery.refetch,
     
+
+    // Logout
+logout: logoutMutation.mutate,
+logoutAsync: logoutMutation.mutateAsync,
+isLoggingOut: logoutMutation.isPending,
+
     // Login
     login: loginMutation.mutate,
     loginAsync: loginMutation.mutateAsync,
@@ -130,10 +137,6 @@ export function useAuth(enabled: boolean = true) {
     registerAsync: registerMutation.mutateAsync,
     isRegistering: registerMutation.isPending,
     
-    // Logout
-    logout: logoutMutation.mutate,
-    logoutAsync: logoutMutation.mutateAsync,
-    isLoggingOut: logoutMutation.isPending,
     
     // Token refresh
     refreshToken: refreshTokenMutation.mutate,

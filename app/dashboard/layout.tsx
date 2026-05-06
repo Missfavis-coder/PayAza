@@ -1,3 +1,4 @@
+
 import { AppSidebar } from "@/components/layouts/dashboard/app-sidebar";
 import { SiteHeader } from "@/components/layouts/dashboard/header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
@@ -5,6 +6,7 @@ import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { PropsWithChildren } from "react";
 
 export default function Page({ children }: PropsWithChildren) {
+  
   return (
     <SidebarProvider className="dark">
       <AppSidebar variant="sidebar" />

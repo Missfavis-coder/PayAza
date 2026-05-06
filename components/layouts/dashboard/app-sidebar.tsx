@@ -41,11 +41,6 @@ const navMain = [
     icon: Activity,
   },
   {
-    title: "Wallet",
-    url: "/dashboard/wallet",
-    icon: CreditCard,
-  },
-  {
     title: "Notification",
     url: "/dashboard/notification",
     icon: Bell,
@@ -85,7 +80,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton asChild>
                 <div className="flex items-center gap-2">
                   {/* ICON CHANGES WHEN COLLAPSED */}
-                  <div className="bg-[#090D18] text-white p-3 rounded-md">
+                  <div className="bg-[#00CF7B] text-white p-3 rounded-md">
                     {isCollapsed ? (
                       <WalletCards size={18} />
                     ) : (
@@ -95,7 +90,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
                   {/* TEXT ONLY WHEN EXPANDED */}
                   {!isCollapsed && (
-                    <span className="text-xl font-bold">PayAza</span>
+                    <span className="text-xl font-bold">TapPay</span>
                   )}
                 </div>
               </SidebarMenuButton>

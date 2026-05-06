@@ -14,22 +14,20 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/hooks/use-auth";
+
+
 
 export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
+  const {  user } = useAuth();
 
   useEffect(() => {
     const t = setTimeout(() => setLoading(false), 1200);
     return () => clearTimeout(t);
   }, []);
 
-  const profile = {
-    firstName: "Ojo",
-    lastName: "Adeshola",
-    userName: "ojo_adeshola",
-    email: "adeshola@payaza.com",
-    phone: "+234 801 234 5678",
-  };
+
 
   return (
     <div className="flex flex-col flex-1 bg-background px-4 md:px-6 py-6 gap-6">
@@ -48,21 +46,18 @@ export default function SettingsPage() {
           <Card className="relative">
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Profile Information</CardTitle>
-
-              <EditProfileModal profile={profile} />
             </CardHeader>
 
             <CardContent className="space-y-3">
               {loading ? (
                 <ProfileSkeleton />
               ) : (
-                <div className="space-y-3 text-sm">
-                  <Row label="First Name" value={profile.firstName} />
-                  <Row label="Last Name" value={profile.lastName} />
-                  <Row label="User Name" value={profile.userName} />
-                  <Row label="Email" value={profile.email} />
-                  <Row label="Phone" value={profile.phone} />
-                </div>
+<div className="space-y-3 text-sm">
+        <Row label="Full Name" value={user?.name || "—"} />
+        <Row label="Role" value={user?.role || "—"} />
+        <Row label="Email" value={user?.email || "—"} />
+        <Row label="Phone" value={user?.phone || "—"} />
+      </div>
               )}
             </CardContent>
           </Card>

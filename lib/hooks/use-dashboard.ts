@@ -7,9 +7,9 @@ import type {
   TransactionsParams,
   NotificationsParams,
   TransferRequest,
+  Wallet,
 } from "@/lib/types/api";
 
-/* ---------------- DASHBOARD OVERVIEW ---------------- */
 
 export const useDashboardOverview = (params?: DashboardOverviewParams) => {
   return useQuery({
@@ -20,12 +20,12 @@ export const useDashboardOverview = (params?: DashboardOverviewParams) => {
   });
 };
 
-/* ---------------- WALLET ---------------- */
 
 export const useWalletBalance = () => {
   return useQuery({
     queryKey: queryKeys.wallet.balance(),
     queryFn: () => dashboardService.wallet.getBalance(),
+
     staleTime: 30 * 1000,
     gcTime: 5 * 60 * 1000,
   });
@@ -40,7 +40,7 @@ export const useTransactions = (params?: TransactionsParams) => {
   });
 };
 
-/* ---------------- TRANSFER ---------------- */
+
 
 export const useInitiateTransfer = () => {
   const queryClient = useQueryClient();
@@ -61,13 +61,63 @@ export const useInitiateTransfer = () => {
       });
     },
 
-    onError: (error: Error) => {
-      toast.error(error.message || "Transfer failed");
+    onError: (error: any) => {
+      toast.error(error?.message || "Transfer failed");
     },
   });
 };
 
-/* ---------------- NOTIFICATIONS ---------------- */
+export const useExecuteTransfer = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: TransferRequest) =>
+      dashboardService.transfer.execute(data),
+
+    onSuccess: () => {
+      toast.success("Transfer completed");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallet.balance(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallet.transactions(),
+      });
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Execution failed");
+    },
+  });
+};
+
+
+export const usePayazaTopUp = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (data: any) =>
+      dashboardService.payaza.handleTopUp(data),
+
+    onSuccess: () => {
+      toast.success("Wallet funded successfully");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallet.balance(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.wallet.transactions(),
+      });
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Top-up failed");
+    },
+  });
+};
+
 
 export const useNotifications = (params?: NotificationsParams) => {
   return useQuery({
@@ -76,6 +126,14 @@ export const useNotifications = (params?: NotificationsParams) => {
     staleTime: 10 * 1000,
     gcTime: 5 * 60 * 1000,
     refetchInterval: 30 * 1000,
+  });
+};
+
+export const useUnreadNotificationsCount = () => {
+  return useQuery({
+    queryKey: queryKeys.notifications.unreadCount(),
+    queryFn: () => dashboardService.notifications.getUnreadCount(),
+    staleTime: 10 * 1000,
   });
 };
 
@@ -109,19 +167,23 @@ export const useMarkNotificationRead = () => {
       return { previous };
     },
 
-    onError: (error: Error, _id, context) => {
+    onError: (error: any, _id, context) => {
       if (context?.previous) {
         queryClient.setQueryData(
           queryKeys.notifications.list(),
           context.previous
         );
       }
-      toast.error(error.message || "Failed to mark as read");
+      toast.error(error?.message || "Failed to mark as read");
     },
 
     onSettled: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.notifications.list(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.unreadCount(),
       });
     },
   });
@@ -158,14 +220,14 @@ export const useMarkAllNotificationsRead = () => {
       return { previous };
     },
 
-    onError: (error: Error, _vars, context) => {
+    onError: (error: any, _vars, context) => {
       if (context?.previous) {
         queryClient.setQueryData(
           queryKeys.notifications.list(),
           context.previous
         );
       }
-      toast.error(error.message || "Failed to mark all as read");
+      toast.error(error?.message || "Failed to mark all as read");
     },
 
     onSuccess: () => {
@@ -176,6 +238,35 @@ export const useMarkAllNotificationsRead = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.notifications.list(),
       });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.unreadCount(),
+      });
+    },
+  });
+};
+
+export const useDeleteNotification = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: (id: string) =>
+      dashboardService.notifications.deleteNotification(id),
+
+    onSuccess: () => {
+      toast.success("Notification deleted");
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.list(),
+      });
+
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.notifications.unreadCount(),
+      });
+    },
+
+    onError: (error: any) => {
+      toast.error(error?.message || "Delete failed");
     },
   });
 };

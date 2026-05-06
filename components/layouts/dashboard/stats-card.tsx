@@ -10,7 +10,8 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { Landmark, ArrowDownLeft, ArrowUpRight } from "lucide-react";
 import { formatToKobo } from "@/lib/utils";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+
+import { useWalletBalance } from "@/lib/hooks/use-dashboard";
 
 function StatCardSkeleton() {
   return (
@@ -31,50 +32,54 @@ function StatCardSkeleton() {
   );
 }
 
-export function StatsCards() {
-  const [loading, setLoading] = useState(true);
-  useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2000);
-    return () => clearTimeout(timer);
-  }, []);
 
-  const availableBalance = 15050000;
-  const incomingFunds = 3200000;
-  const totalSpent = 4850000;
+export function StatsCards() {
+  const { data, isLoading } = useWalletBalance();
+
+
+  const wallet = data?.data?.wallet;
+
+  const availableBalance = Number(wallet?.balance ?? 0);
+
+
+  const incomingFunds = 0;
+  const totalSpent = 0;
 
   return (
     <TooltipProvider>
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3 px-2">
-        {loading ? (
+
+        {isLoading ? (
           <StatCardSkeleton />
         ) : (
           <StatCard
             title="Available Balance"
-            value={formatToKobo(availableBalance)}
+            value={`#${availableBalance}`}
             description="Spendable wallet balance across all payment modes"
             type="cash"
           />
         )}
-        {/* 2. Incoming Funds */}
-        {loading ? (
+
+        {/* INCOMING */}
+        {isLoading ? (
           <StatCardSkeleton />
         ) : (
           <StatCard
             title="Incoming Transfers"
             value={formatToKobo(incomingFunds)}
-            description="Pending and processing payments (NFC, QR, Bank)"
+            description="Pending and processing payments"
             type="incoming"
           />
         )}
-        {/* 3. Total Spent */}
 
-        {loading ? (
+        {/* SPENT */}
+        {isLoading ? (
           <StatCardSkeleton />
         ) : (
           <StatCard
             title="Today’s Spending"
             value={formatToKobo(totalSpent)}
-            description="Real-time outflow across all TapPay transactions"
+            description="Real-time outflow across all transactions"
             type="outflow"
           />
         )}
@@ -82,6 +87,7 @@ export function StatsCards() {
     </TooltipProvider>
   );
 }
+
 
 function StatCard({
   title,
@@ -97,21 +103,18 @@ function StatCard({
   const config = {
     cash: {
       icon: Landmark,
-      accent: "bg-cyan-500",
-      glow: "from-cyan-500/15",
       text: "text-cyan-400",
+      glow: "from-cyan-500/15",
     },
     incoming: {
       icon: ArrowDownLeft,
-      accent: "bg-green-500",
-      glow: "from-green-500/15",
       text: "text-green-400",
+      glow: "from-green-500/15",
     },
     outflow: {
       icon: ArrowUpRight,
-      accent: "bg-rose-500",
-      glow: "from-rose-500/15",
       text: "text-rose-400",
+      glow: "from-rose-500/15",
     },
   }[type];
 
@@ -122,13 +125,13 @@ function StatCard({
       className={cn(
         "relative overflow-hidden rounded-xl border backdrop-blur-md",
         "border-white/10 bg-black/40 text-white",
-        "transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl group",
+        "transition-all duration-200 hover:-translate-y-1 hover:shadow-2xl group"
       )}
     >
       <div
         className={cn(
           "absolute inset-0 opacity-0 group-hover:opacity-100 transition",
-          `bg-gradient-to-br ${config.glow} via-transparent to-transparent`,
+          `bg-gradient-to-br ${config.glow} via-transparent to-transparent`
         )}
       />
 
@@ -147,17 +150,12 @@ function StatCard({
           {value}
         </CardTitle>
 
-        <p className="text-[11px] text-neutral-500 leading-relaxed mt-2">
+        <p className="text-[11px] text-neutral-500 mt-2">
           {description}
         </p>
       </CardHeader>
 
-      <div
-        className={cn(
-          "absolute -right-10 -bottom-10 opacity-[0.04]",
-          config.text,
-        )}
-      >
+      <div className={cn("absolute -right-10 -bottom-10 opacity-[0.04]", config.text)}>
         <Icon size={160} />
       </div>
     </Card>

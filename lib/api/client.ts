@@ -28,33 +28,29 @@ export const tokenStorage = {
   
   setAccessToken: (token: string): void => {
     if (typeof window !== "undefined") {
-      sessionStorage.setItem(ACCESS_TOKEN_KEY, token);
+      localStorage.setItem(ACCESS_TOKEN_KEY, token);
     }
   },
-  
-  getRefreshToken: (): string | null => {
-    if (typeof window !== "undefined") {
-      // Option 2: localStorage for refresh token (persists across tabs)
-      return localStorage.getItem(REFRESH_TOKEN_KEY);
-      // OR use sessionStorage for more security
-      // return sessionStorage.getItem(REFRESH_TOKEN_KEY);
-    }
-    return null;
-  },
-  
+
   setRefreshToken: (token: string): void => {
     if (typeof window !== "undefined") {
       localStorage.setItem(REFRESH_TOKEN_KEY, token);
     }
   },
   
+  getRefreshToken: (): string | null => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem(REFRESH_TOKEN_KEY);
+
+    }
+    return null;
+  },
+  
+  
   clearTokens: (): void => {
     if (typeof window !== "undefined") {
-      sessionStorage.removeItem(ACCESS_TOKEN_KEY);
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
       localStorage.removeItem(REFRESH_TOKEN_KEY);
-      // Or if using sessionStorage for both:
-      // sessionStorage.removeItem(ACCESS_TOKEN_KEY);
-      // sessionStorage.removeItem(REFRESH_TOKEN_KEY);
     }
   },
 };
@@ -98,7 +94,7 @@ let refreshPromise: Promise<string | null> | null = null;
 const PUBLIC_ROUTES = [
   "/",
   "/auth/login",
-  "/logins"
+  "/login"
 ];
 
 function isPublicRoute(pathname: string): boolean {
@@ -163,89 +159,79 @@ axiosInstance.interceptors.response.use(
       const processedError =
         await interceptorManager.applyErrorInterceptors(apiError);
 
-      if (
-        processedError.status === 401 &&
-        originalRequest &&
-        !(originalRequest as any)._retry
-      ) {
-        if (typeof window !== "undefined") {
-          (originalRequest as any)._retry = true;
-
-          const refreshToken = tokenStorage.getRefreshToken();
-          if (!refreshToken) {
-            if (isPublicRoute(window.location.pathname)) {
-              tokenStorage.clearTokens();
-              return Promise.reject(processedError);
-            }
-            tokenStorage.clearTokens();
-            const loginUrl = new URL("/login", window.location.origin);
-            loginUrl.searchParams.set(
-              "redirect",
-              window.location.pathname + window.location.search,
-            );
-            window.location.href = loginUrl.toString();
-            return new Promise(() => {});
+        if (
+          processedError.status === 401 &&
+          originalRequest &&
+          !(originalRequest as any)._retry
+        ) {
+          const isRefreshRequest =
+            originalRequest.url?.includes("/auth/refresh");
+        
+          if (isRefreshRequest) {
+            redirectToLogin();
+            return Promise.reject(processedError);
           }
-
+        
+          (originalRequest as any)._retry = true;
+        
+          const refreshToken = tokenStorage.getRefreshToken();
+        
+          if (!refreshToken) {
+            redirectToLogin();
+            return Promise.reject(processedError);
+          }
+        
           const retryRequest = () => {
-            if ((originalRequest as any).headers) {
-              delete (originalRequest as any).headers["Authorization"];
-            }
-            // Add new access token to the retried request
             const newAccessToken = tokenStorage.getAccessToken();
-            if (newAccessToken && (originalRequest as any).headers) {
-              (originalRequest as any).headers.Authorization = `Bearer ${newAccessToken}`;
+        
+            if (newAccessToken && originalRequest.headers) {
+              originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
             }
+        
             return axiosInstance.request(originalRequest);
           };
-
+        
           if (isRefreshing && refreshPromise) {
-            return refreshPromise.then((newAccessToken) => {
-              if (newAccessToken) {
-                return retryRequest();
-              }
+            return refreshPromise.then((token) => {
+              if (token) return retryRequest();
               redirectToLogin();
               throw processedError;
             });
           }
-
+        
           isRefreshing = true;
+        
           refreshPromise = authService.refreshToken().then(
             (result) => {
               isRefreshing = false;
-              const promise = refreshPromise;
               refreshPromise = null;
-              
-              if (result && typeof result === 'object') {
-                // Store the new tokens
-                if ('accessToken' in result && result.accessToken) {
-                  tokenStorage.setAccessToken(result.accessToken);
-                }
-                if ('refreshToken' in result && result.refreshToken) {
+        
+              if (result?.accessToken) {
+                tokenStorage.setAccessToken(result.accessToken);
+                if (result.refreshToken) {
                   tokenStorage.setRefreshToken(result.refreshToken);
                 }
-                // Return the new access token for queue processing
-                return result.accessToken || null;
+                return result.accessToken;
               }
+        
+              redirectToLogin();
               return null;
             },
-            () => {
+            (error) => {
               isRefreshing = false;
               refreshPromise = null;
-              return null;
-            },
-          );
-
-          return refreshPromise.then((newAccessToken) => {
-            if (newAccessToken) {
-              return retryRequest();
+        
+              redirectToLogin(); 
+              return Promise.reject(error);
             }
+          );
+        
+          return refreshPromise.then((token) => {
+            if (token) return retryRequest();
             redirectToLogin();
             throw processedError;
           });
         }
-      }
-
       throw processedError;
     }
 

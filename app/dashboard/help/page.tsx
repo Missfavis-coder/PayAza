@@ -55,7 +55,7 @@ export default function HelpPage() {
                onMouseEnter={() => setFocused(true)}
               onBlur={() => setTimeout(() => setFocused(false), 150)}
               placeholder="Search payments, transfers, account issues..."
-              className="outline-none border-neutral-900 border w-full rounded-md p-3 focus:ring-1 focus:ring-[#00CF7B]"
+              className="outline-none border-neutral-800 border w-full rounded-md p-3 focus:ring-1 focus:ring-[#00CF7B]"
             />
 
             {/* DROPDOWN */}

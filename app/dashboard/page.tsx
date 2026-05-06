@@ -6,16 +6,15 @@ import { Button } from "../../components/ui/button";
 ///import { useProfile, useWhatsAppStatus } from "@/lib/hooks";
 import { useRouter } from "next/navigation";
 import { StatsCards } from "@/components/layouts/dashboard/stats-card";
-import { ActionRail } from "@/components/layouts/dashboard/action-buttons";
+import { ActionRail } from "@/app/dashboard/wallet/_components/action-buttons";
 import { ChartAreaInteractive } from "@/components/layouts/dashboard/charts";
-import { RecentTable } from "@/components/layouts/dashboard/recent-transactions";
 import { useAuth } from "@/lib/hooks/use-auth";
+import RecentTable from "@/components/layouts/dashboard/recent-transactions";
 ///import { redirectToIntegration } from "@/lib/utils/redirect";
 
 const page = () => {
   const { user, isLoading } = useAuth();
-  console.log(user)
-  const router = useRouter();
+  
   
 
   return (
@@ -25,7 +24,7 @@ const page = () => {
           <div className="w-full lg:px-6 px-4 md:flex justify-between items-start md:items-center gap-4">
             <div className="flex-1 min-w-0">
               <h1 className="md:text-xl text-lg font-medium gap-1 md:gap-2 flex flex-wrap items-center">
-                <span className="text-sm md:text-base">
+                <span className="text-sm md:text-base uppercase">
                   Welcome Back, {user?.name ?? "User"} !!
                 </span>
               </h1>
@@ -36,7 +35,6 @@ const page = () => {
           </div>
           <div className="px-4 space-y-4">
             <StatsCards/>
-            <ActionRail/>
             <ChartAreaInteractive/>
             <RecentTable/>
           </div>

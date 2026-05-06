@@ -13,14 +13,13 @@ export const queryKeys = {
     check: () => ["health"] as const,
   },
 
-  /* ---------------- DASHBOARD ---------------- */
 
   dashboard: {
     overview: (params?: any) =>
       ["dashboard", "overview", params] as const,
   },
 
-  /* ---------------- WALLET ---------------- */
+
 
   wallet: {
     balance: () => ["wallet", "balance"] as const,
@@ -28,8 +27,6 @@ export const queryKeys = {
     transactions: (params?: any) =>
       ["wallet", "transactions", params] as const,
   },
-
-  /* ---------------- NOTIFICATIONS ---------------- */
 
   notifications: {
     list: (params?: any) =>

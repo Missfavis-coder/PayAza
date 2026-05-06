@@ -1,5 +1,4 @@
 import { apiClient } from "@/lib/api";
-import { API_ROUTES } from "@/lib/api/config";
 import type {
   DashboardOverviewParams,
   DashboardOverviewResponse,
@@ -13,49 +12,73 @@ import type {
 } from "@/lib/types/api";
 
 export const dashboardService = {
+
   dashboard: {
     async getOverview(
       params?: DashboardOverviewParams
     ): Promise<DashboardOverviewResponse> {
-      return apiClient.get(API_ROUTES.health, { params }); // replace if backend has /dashboard/overview
+      return apiClient.get("/health", { params });
     },
   },
 
   wallet: {
+    async createWallet() {
+      return apiClient.post("/wallet");
+    },
+
     async getBalance(): Promise<WalletBalanceResponse> {
-      return apiClient.get(API_ROUTES.wallet.balance);
+      return apiClient.get("/wallet/balance");
     },
 
     async getTransactions(
       params?: TransactionsParams
     ): Promise<TransactionsResponse> {
-      return apiClient.get(API_ROUTES.wallet.transactions, { params });
+      return apiClient.get("/wallet/transactions", { params });
     },
   },
 
   transfer: {
     async initiate(data: any) {
-      return apiClient.post(API_ROUTES.transfer.initiate, data);
+      return apiClient.post("/transfer/initiate", data);
     },
 
     async execute(data: any) {
-      return apiClient.post(API_ROUTES.transfer.execute, data);
+      return apiClient.post("/transfer/execute", data);
     },
   },
+
+  payaza: {
+    async handleTopUp(data: any) {
+      return apiClient.post("/payoza/handlTopUp", data);
+    },
+
+    async webhook(data: any) {
+      return apiClient.post("/payoza/webhook", data);
+    },
+  },
+
 
   notifications: {
     async getList(
       params?: NotificationsParams
     ): Promise<NotificationsResponse> {
-      return apiClient.get(API_ROUTES.notifications.list, { params });
+      return apiClient.get("/notifications", { params });
+    },
+
+    async getUnreadCount(): Promise<{ count: number }> {
+      return apiClient.get("/notifications/unread/count");
     },
 
     async markAsRead(id: string): Promise<MarkNotificationReadResponse> {
-      return apiClient.patch(API_ROUTES.notifications.markRead(id));
+      return apiClient.put(`/notifications/${id}/read`);
     },
 
     async markAllAsRead(): Promise<MarkAllNotificationsReadResponse> {
-      return apiClient.patch(API_ROUTES.notifications.markAllRead);
+      return apiClient.put("/notifications/read/all");
+    },
+
+    async deleteNotification(id: string) {
+      return apiClient.delete(`/notifications/${id}`);
     },
   },
 };

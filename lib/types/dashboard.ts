@@ -1,10 +1,22 @@
 import type { Period } from "./common";
 
-/* ---------------- WALLET ---------------- */
+
+
+export interface Wallet {
+  id: string;
+  balance: string;
+  currency: "NGN";
+  createdAt: string;
+  updatedAt: string;
+  userId: string;
+}
 
 export interface WalletBalanceResponse {
-  balance: number;
-  currency: "NGN";
+    message: string;
+    data: {
+      wallet: Wallet;
+    }
+  
 }
 
 /* ---------------- TRANSACTIONS ---------------- */
@@ -29,11 +41,13 @@ export interface TransactionsParams {
 }
 
 export interface TransactionsResponse {
-  data: Transaction[];
+  data:{
+    transactions:Transaction[];
   meta: {
     page: number;
     limit: number;
     total: number;
+  };
   };
 }
 

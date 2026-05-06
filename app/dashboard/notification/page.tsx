@@ -20,11 +20,13 @@ import {
 import {
   useNotifications,
   useMarkNotificationRead,
+  useMarkAllNotificationsRead,
+  useUnreadNotificationsCount,
 } from "@/lib/hooks/use-dashboard";
 
 /* ---------------- TYPES ---------------- */
 
-type Notification = {
+type UINotification = {
   id: string;
   type: "TRANSACTION" | "ALERT" | "PROMOTION";
   message: string;
@@ -32,49 +34,62 @@ type Notification = {
   read: boolean;
 };
 
-/* ---------------- SKELETON ---------------- */
+/* ---------------- HELPERS ---------------- */
 
-const NotificationSkeleton = () => {
-  return (
-    <Card className="border rounded-md bg-neutral-900 border-neutral-800 py-2 animate-pulse">
-      <CardHeader className="flex items-center justify-between">
-        <div className="flex items-center gap-2 w-full">
-          <div className="w-5 h-5 bg-neutral-700 rounded-full" />
-          <div className="h-3 w-3/4 bg-neutral-700 rounded" />
-        </div>
-        <div className="h-6 w-16 bg-neutral-700 rounded" />
-      </CardHeader>
-      <CardContent>
-        <div className="h-3 w-20 bg-neutral-800 rounded" />
-      </CardContent>
-    </Card>
-  );
-};
+function deriveType(message: string): UINotification["type"] {
+  const msg = message.toLowerCase();
 
-/* ---------------- COMPONENT ---------------- */
+  if (msg.includes("credited") || msg.includes("debited")) {
+    return "TRANSACTION";
+  }
+
+  if (msg.includes("failed") || msg.includes("error")) {
+    return "ALERT";
+  }
+
+  return "PROMOTION";
+}
 
 export default function Page() {
   const [search, setSearch] = React.useState("");
+  const [activeId, setActiveId] = React.useState<string | null>(null);
 
   const { data, isLoading } = useNotifications();
-  const { mutate: markAsReadMutation, isPending } = useMarkNotificationRead();
+  const { data: unreadData } = useUnreadNotificationsCount();
 
-  /* SAFE NORMALIZATION */
-  const notifications: Notification[] = React.useMemo(() => {
-    return (data?.data ?? []).map((n: any) => ({
+  const { mutate: markAsRead } = useMarkNotificationRead();
+  const { mutate: markAll, isPending: isMarkingAll } =
+    useMarkAllNotificationsRead();
+
+  /* ---------------- DATA ---------------- */
+
+  const notifications: UINotification[] = React.useMemo(() => {
+    const raw = data?.data ?? [];
+
+    return raw.map((n) => ({
       id: n.id,
-      type: n.type ?? "ALERT",
       message: n.message,
       createdAt: n.createdAt,
-      read: n.read ?? false,
+      read: n.read,
+      type: deriveType(n.message),
     }));
   }, [data]);
 
-  const markAsRead = (id: string) => {
-    markAsReadMutation(id);
+  const unreadCount = unreadData?.count ?? 0;
+
+  /* ---------------- ACTIONS ---------------- */
+
+  const handleMarkAsRead = (id: string) => {
+    setActiveId(id);
+
+    markAsRead(id, {
+      onSettled: () => setActiveId(null),
+    });
   };
 
-  const renderIcon = (type: Notification["type"]) => {
+  /* ---------------- UI HELPERS ---------------- */
+
+  const renderIcon = (type: UINotification["type"]) => {
     switch (type) {
       case "TRANSACTION":
         return <CheckCircle className="text-green-500 w-5 h-5" />;
@@ -104,16 +119,35 @@ export default function Page() {
     return `${days} days ago`;
   };
 
+  /* ---------------- UI ---------------- */
+
   return (
     <div className="md:p-4 p-4 space-y-4">
       {/* HEADER */}
-      <div className="mb-6">
-        <h1 className="md:text-2xl text-xl tracking-wider font-bold">
-          Notifications
-        </h1>
-        <p className="text-neutral-400 text-sm mt-2">
-          Stay updated with all your transaction details and others.
-        </p>
+      <div className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="md:text-2xl text-xl tracking-wider font-bold">
+            Notifications
+          </h1>
+          <p className="text-neutral-400 text-sm mt-2">
+            Stay updated with all your activity.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-gray-400">
+            {unreadCount} unread
+          </span>
+
+          <Button
+            size="sm"
+            variant="outline"
+            onClick={() => markAll()}
+            disabled={isMarkingAll}
+          >
+            {isMarkingAll ? "..." : "Mark all"}
+          </Button>
+        </div>
       </div>
 
       {/* SEARCH */}
@@ -128,13 +162,28 @@ export default function Page() {
         />
       </div>
 
-      {/* CONTENT */}
+      {/* LIST */}
       {isLoading ? (
         <div className="space-y-3">
-          {Array.from({ length: 5 }).map((_, i) => (
-            <NotificationSkeleton key={i} />
-          ))}
-        </div>
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Card
+            key={i}
+            className="border rounded-md bg-neutral-900 border-neutral-800 py-2 animate-pulse"
+          >
+            <CardHeader className="flex items-center justify-between">
+              <div className="flex items-center gap-2 w-full">
+                <div className="w-5 h-5 bg-neutral-700 rounded-full" />
+                <div className="h-3 w-3/4 bg-neutral-700 rounded" />
+              </div>
+              <div className="h-6 w-16 bg-neutral-700 rounded" />
+            </CardHeader>
+      
+            <CardContent>
+              <div className="h-3 w-20 bg-neutral-800 rounded" />
+            </CardContent>
+          </Card>
+        ))}
+      </div>
       ) : filteredNotifications.length > 0 ? (
         filteredNotifications.map((notif) => (
           <Card
@@ -157,10 +206,10 @@ export default function Page() {
                 <Button
                   size="sm"
                   variant="ghost"
-                  disabled={isPending}
-                  onClick={() => markAsRead(notif.id)}
+                  disabled={activeId === notif.id}
+                  onClick={() => handleMarkAsRead(notif.id)}
                 >
-                  {isPending ? "..." : "Mark as read"}
+                  {activeId === notif.id ? "..." : "Mark as read"}
                 </Button>
               )}
             </CardHeader>
@@ -173,9 +222,9 @@ export default function Page() {
           </Card>
         ))
       ) : (
-        <div className="text-center py-10 text-gray-400">
+        <div className="text-center py-10 text-neutral300">
           <p className="text-sm">No notifications yet</p>
-          <p className="text-xs mt-1">You're all caught up 🎉</p>
+          <p className="text-xs mt-1">You're all up to date 👌</p>
         </div>
       )}
     </div>

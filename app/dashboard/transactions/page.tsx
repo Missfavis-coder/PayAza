@@ -12,224 +12,91 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Download } from "lucide-react";
-import React, { useState, Suspense, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import React, { useState } from "react";
+import { StatusBadge } from "./_components/status-badge";
+import { useTransactions } from "@/lib/hooks/use-dashboard";
 
-/* ---------------- BACKEND TYPES ---------------- */
 
-type TransactionType = "SUCCESS" | "PENDING" | "FAILED";
+type TransactionType = "CREDIT" | "DEBIT";
 
-interface Transaction {
-  id: string;
-  description: string | null;
-  amount: number; // NAIRA
-  walletId: string;
-  reference: string | null;
-  createdAt: string;
-  updatedAt: string;
-  type: TransactionType;
-}
-
-/* ---------------- UI TYPE ---------------- */
-
-interface TransactionUI {
+export interface TransactionUI {
   id: string;
   date: string;
-  amount: string; // ₦ formatted
+  amount: string;
   wallet: string;
   reference: string;
+  description: string | null ;
   status: "Successful" | "Pending" | "Failed";
 }
 
-const mockTransactions: Transaction[] = [
-  {
-    id: "TXN-10001",
-    description: "Wallet funding",
-    amount: 1500,
-    walletId: "WALLET-1",
-    reference: "REF-001",
-    createdAt: "2026-05-01T10:15:00Z",
-    updatedAt: "2026-05-01T10:15:00Z",
-    type: "SUCCESS",
-  },
-  {
-    id: "TXN-10002",
-    description: "Bank transfer",
-    amount: 3000,
-    walletId: "WALLET-1",
-    reference: null,
-    createdAt: "2026-05-02T11:20:00Z",
-    updatedAt: "2026-05-02T11:20:00Z",
-    type: "PENDING",
-  },
-  {
-    id: "TXN-10003",
-    description: "Electricity bill",
-    amount: 800,
-    walletId: "WALLET-2",
-    reference: "REF-003",
-    createdAt: "2026-05-02T14:05:00Z",
-    updatedAt: "2026-05-02T14:05:00Z",
-    type: "FAILED",
-  },
-  {
-    id: "TXN-10004",
-    description: "Airtime purchase",
-    amount: 500,
-    walletId: "WALLET-2",
-    reference: "REF-004",
-    createdAt: "2026-05-03T09:10:00Z",
-    updatedAt: "2026-05-03T09:10:00Z",
-    type: "SUCCESS",
-  },
-  {
-    id: "TXN-10005",
-    description: "Data subscription",
-    amount: 2000,
-    walletId: "WALLET-1",
-    reference: null,
-    createdAt: "2026-05-03T12:40:00Z",
-    updatedAt: "2026-05-03T12:40:00Z",
-    type: "SUCCESS",
-  },
-  {
-    id: "TXN-10006",
-    description: "Wallet topup",
-    amount: 10000,
-    walletId: "WALLET-3",
-    reference: "REF-006",
-    createdAt: "2026-05-04T08:25:00Z",
-    updatedAt: "2026-05-04T08:25:00Z",
-    type: "SUCCESS",
-  },
-  {
-    id: "TXN-10007",
-    description: "Transfer to merchant",
-    amount: 4500,
-    walletId: "WALLET-1",
-    reference: "REF-007",
-    createdAt: "2026-05-04T15:30:00Z",
-    updatedAt: "2026-05-04T15:30:00Z",
-    type: "FAILED",
-  },
-  {
-    id: "TXN-10008",
-    description: "POS payment",
-    amount: 1200,
-    walletId: "WALLET-2",
-    reference: null,
-    createdAt: "2026-05-05T10:00:00Z",
-    updatedAt: "2026-05-05T10:00:00Z",
-    type: "SUCCESS",
-  },
-  {
-    id: "TXN-10009",
-    description: "Subscription fee",
-    amount: 2500,
-    walletId: "WALLET-3",
-    reference: "REF-009",
-    createdAt: "2026-05-05T13:45:00Z",
-    updatedAt: "2026-05-05T13:45:00Z",
-    type: "PENDING",
-  },
-  {
-    id: "TXN-10010",
-    description: "Wallet funding",
-    amount: 7000,
-    walletId: "WALLET-1",
-    reference: "REF-010",
-    createdAt: "2026-05-05T18:10:00Z",
-    updatedAt: "2026-05-05T18:10:00Z",
-    type: "SUCCESS",
-  },
-];
-/* ---------------- MAPPER ---------------- */
 
-const mapTx = (tx: Transaction): TransactionUI => {
-  const statusMap: Record<TransactionType, TransactionUI["status"]> = {
-    SUCCESS: "Successful",
-    PENDING: "Pending",
-    FAILED: "Failed",
-  };
+const mapTx = (tx: any): TransactionUI => {
+  const status =
+    tx.type === "CREDIT"
+      ? "Successful"
+      : tx.type === "DEBIT"
+      ? "Failed"
+      : "Pending";
 
   return {
-    id: tx.id,
-    date: new Date(tx.createdAt).toLocaleDateString(),
-    amount: `₦${tx.amount.toLocaleString()}`,
-    wallet: tx.walletId,
-    reference: tx.reference ?? "—",
-    status: statusMap[tx.type],
+    id: tx?.id ?? "",
+    date: tx?.createdAt
+      ? new Date(tx.createdAt).toLocaleDateString()
+      : "—",
+    amount: `₦${Number(tx?.amount ?? 0).toLocaleString()}`,
+    description: tx?.description,
+    wallet: tx?.walletId ?? "—",
+    reference: tx?.reference ?? "—",
+    status,
   };
 };
 
-/* ---------------- STATUS BADGE ---------------- */
 
-const StatusBadge = ({ status }: { status: TransactionUI["status"] }) => {
-  const colors = {
-    Successful: "text-emerald-500",
-    Pending: "text-amber-500",
-    Failed: "text-red-500",
-  };
 
-  return (
-    <div className="flex items-center gap-1.5">
-      <div
-        className={cn(
-          "h-1 w-1 rounded-full",
-          status === "Successful"
-            ? "bg-emerald-500"
-            : status === "Pending"
-            ? "bg-amber-500"
-            : "bg-red-500"
-        )}
-      />
-      <span className={cn("text-[10px] font-bold uppercase tracking-widest", colors[status])}>
-        {status}
-      </span>
-    </div>
-  );
+
+const TableSkeleton = () => {
+  return Array.from({ length: 6 }).map((_, i) => (
+    <TableRow key={i} className="animate-pulse">
+      <TableCell><div className="h-3 w-20 bg-neutral-800 rounded" /></TableCell>
+      <TableCell><div className="h-3 w-16 bg-neutral-800 rounded" /></TableCell>
+      <TableCell><div className="h-3 w-12 bg-neutral-800 rounded" /></TableCell>
+      <TableCell><div className="h-3 w-24 bg-neutral-800 rounded" /></TableCell>
+      <TableCell><div className="h-3 w-14 bg-neutral-800 rounded" /></TableCell>
+      <TableCell className="text-right">
+        <div className="h-6 w-10 bg-neutral-800 rounded ml-auto" />
+      </TableCell>
+    </TableRow>
+  ));
 };
 
 /* ---------------- COMPONENT ---------------- */
 
-const BillingContent = () => {
-  const [transactions, setTransactions] = useState<TransactionUI[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<"all" | "Successful" | "Pending" | "Failed">("all");
+const TransactionContent = () => {
+  const [filter, setFilter] = useState<
+    "all" | "Successful" | "Pending" | "Failed"
+  >("all");
+
   const [downloadingInvoice, setDownloadingInvoice] = useState<string | null>(null);
 
-  const router = useRouter();
+  const { data, isLoading } = useTransactions();
 
-  /* LOAD MOCK */
-  useEffect(() => {
-    const t = setTimeout(() => {
-      setTransactions(mockTransactions.map(mapTx));
-      setLoading(false);
-    }, 800);
+  const rawTransactions = data?.data?.transactions ?? [];
 
-    return () => clearTimeout(t);
-  }, []);
+  const transactions: TransactionUI[] = React.useMemo(() => {
+    return rawTransactions.map(mapTx);
+  }, [rawTransactions]);
 
-  /* FILTER */
   const filtered = transactions.filter((tx) =>
     filter === "all" ? true : tx.status === filter
   );
 
-  /* DOWNLOAD INVOICE (MOCK BUT REALISTIC) */
   const handleDownload = (tx: TransactionUI) => {
     setDownloadingInvoice(tx.id);
 
     setTimeout(() => {
       const blob = new Blob(
         [
-          `PAYMENT INVOICE\n\n
-Transaction ID: ${tx.id}
-Amount: ${tx.amount}
-Wallet: ${tx.wallet}
-Reference: ${tx.reference}
-Status: ${tx.status}
-Date: ${tx.date}
-          `,
+          `PAYMENT INVOICE\n\nTransaction ID: ${tx.id}\nAmount: ${tx.amount}\nWallet: ${tx.wallet}\nReference: ${tx.reference}\nStatus: ${tx.status}\nDate: ${tx.date}`,
         ],
         { type: "text/plain" }
       );
@@ -252,7 +119,6 @@ Date: ${tx.date}
       <div className="flex justify-between items-center">
         <h2 className="text-lg font-bold">Transaction History</h2>
 
-        {/* FILTER */}
         <div className="flex gap-2">
           {["all", "Successful", "Pending", "Failed"].map((f) => (
             <Button
@@ -260,7 +126,7 @@ Date: ${tx.date}
               size="sm"
               variant={filter === f ? "default" : "ghost"}
               onClick={() => setFilter(f as any)}
-              className="text-xs uppercase"
+              className="text-xs uppercase cursor-pointer"
             >
               {f}
             </Button>
@@ -276,24 +142,33 @@ Date: ${tx.date}
               <TableHead>Date</TableHead>
               <TableHead>Wallet</TableHead>
               <TableHead>Amount</TableHead>
-              <TableHead>Reference</TableHead>
+              <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
               <TableHead className="text-right">Invoice</TableHead>
             </TableRow>
           </TableHeader>
 
           <TableBody>
-            {loading ? (
-              <TableRow>
-                <TableCell colSpan={6}>Loading...</TableCell>
-              </TableRow>
+            {isLoading ? (
+              <TableSkeleton />
             ) : filtered.length > 0 ? (
               filtered.map((tx) => (
                 <TableRow key={tx.id}>
                   <TableCell>{tx.date}</TableCell>
-                  <TableCell>{tx.wallet}</TableCell>
+                  <TableCell className="cursor-pointer select-none hover:text-[#00CF7B] transition"
+                    onClick={() => {
+                      if (tx.wallet) {
+                        navigator.clipboard.writeText(tx.wallet);
+                      }
+                    }}
+                    title="Click to copy full description"
+                  >
+                    {tx.wallet ? tx.wallet.length > 16 ? `${tx.wallet.slice(0, 16)}...` : tx.wallet : "_"}
+                  </TableCell>
                   <TableCell>{tx.amount}</TableCell>
-                  <TableCell>{tx.reference}</TableCell>
+                  <TableCell>
+                    {tx.description}
+                  </TableCell>
                   <TableCell>
                     <StatusBadge status={tx.status} />
                   </TableCell>
@@ -324,14 +199,10 @@ Date: ${tx.date}
   );
 };
 
-/* ---------------- PAGE WRAPPER ---------------- */
 
-const BillingPage = () => {
-  return (
-    <Suspense fallback={<div>Loading...</div>}>
-      <BillingContent />
-    </Suspense>
-  );
+
+const TransactionPage = () => {
+  return <TransactionContent />;
 };
 
-export default BillingPage;
+export default TransactionPage;
