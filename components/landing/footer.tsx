@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import {
-  ArrowUpRight,
-  ShieldCheck,
-  Smartphone,
-  Wallet,
-} from "lucide-react";
+import { ArrowUpRight, ShieldCheck, Smartphone, Wallet } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -18,12 +13,16 @@ export default function Footer() {
           <div>
             <div className="flex items-center gap-3 mb-5">
               <div className="w-11 h-11 rounded-xl bg-[#00CF7B]/15 flex items-center justify-center">
-                <Wallet className="w-5 h-5 text-[#00CF7B]" />
+                <img
+                  src="/logo.png"
+                  className="w-11 h-11 p-1 rounded-xl"
+                  alt=""
+                />
               </div>
 
               <div>
                 <h3 className="text-white text-2xl font-bold">
-                  TapPay
+                  Tap<span className="text-green-400">Pay</span>
                 </h3>
                 <p className="text-xs text-neutral-500">
                   Modern Payment Infrastructure
@@ -32,9 +31,9 @@ export default function Footer() {
             </div>
 
             <p className="text-sm leading-relaxed text-neutral-300 max-w-sm">
-              TapPay enables seamless real-time payments through NFC,
-              QR codes, usernames, and phone numbers — designed for
-              fast, secure, and reliable financial experiences.
+              TapPay enables seamless real-time payments through NFC, QR codes,
+              usernames, and phone numbers — designed for fast, secure, and
+              reliable financial experiences.
             </p>
 
             {/* FEATURE TAGS */}
@@ -53,9 +52,7 @@ export default function Footer() {
 
           {/* PLATFORM */}
           <div>
-            <h4 className="text-white font-semibold mb-5">
-              Platform
-            </h4>
+            <h4 className="text-white font-semibold mb-5">Platform</h4>
 
             <ul className="space-y-3 text-sm">
               <li>
@@ -98,9 +95,7 @@ export default function Footer() {
 
           {/* COMPANY */}
           <div>
-            <h4 className="text-white font-semibold mb-5">
-              Company
-            </h4>
+            <h4 className="text-white font-semibold mb-5">Company</h4>
 
             <ul className="space-y-3 text-sm">
               <li>
@@ -122,10 +117,7 @@ export default function Footer() {
               </li>
 
               <li>
-                <Link
-                  href="/faq"
-                  className="hover:text-[#00CF7B] transition"
-                >
+                <Link href="/faq" className="hover:text-[#00CF7B] transition">
                   FAQ
                 </Link>
               </li>
@@ -140,15 +132,11 @@ export default function Footer() {
               </li>
             </ul>
           </div>
-
         </div>
 
         {/* BOTTOM BAR */}
         <div className="mt-14 pt-6 border-t border-neutral-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-neutral-500">
-          <p>
-            © {new Date().getFullYear()} TapPay. All rights reserved.
-          </p>
-
+          <p>© {new Date().getFullYear()} TapPay. All rights reserved.</p>
         </div>
       </div>
     </footer>
