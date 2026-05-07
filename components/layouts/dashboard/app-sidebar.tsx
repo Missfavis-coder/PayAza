@@ -7,6 +7,7 @@ import {
   CreditCard,
   LayoutDashboardIcon,
   Settings,
+  Shield,
   Sofa,
   Users,
   WalletCards,
@@ -28,8 +29,9 @@ import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import Navcredits from "./nav-footer";
 import Navsettings from "./nav-footer";
+import { useAuth } from "@/lib/hooks/use-auth";
 
-const navMain = [
+const baseNavMain = [
   {
     title: "Home",
     url: "/dashboard",
@@ -57,9 +59,18 @@ const navMain = [
   },
 ];
 
+const adminNavItem = {
+  title: "Admin",
+  url: "/dashboard/admin",
+  icon: Shield,
+};
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { state, isMobile, setOpenMobile } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const { user } = useAuth();
+  const isAdmin = (user?.role ?? "").toUpperCase() === "ADMIN";
+  const navMain = isAdmin ? [...baseNavMain, adminNavItem] : baseNavMain;
   return (
     <Sidebar
       className="border-r bg-card relative overflow-hidden"

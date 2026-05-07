@@ -19,7 +19,7 @@ const NavSettings = () => {
       ?.split(" ")
       .map((n) => n[0])
       .join("")
-      .toUpperCase() ?? "OA";
+      .toUpperCase() ?? "U";
 
   if (state === "collapsed") {
     return (

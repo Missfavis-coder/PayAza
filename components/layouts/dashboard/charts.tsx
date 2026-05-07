@@ -28,7 +28,7 @@ import {
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 export const description =
-  "Payaza Wallet Activity shows your income vs spending over time in ₦.";
+  "TapPay Wallet Activity shows your income vs spending over time in ₦.";
 
 const chartData = [
   { date: "2026-01-01", income: 25000, expense: 12000 },
@@ -112,7 +112,7 @@ export function ChartAreaInteractive() {
     <Card className="@container/card mt-4 px-2">
       <CardHeader>
         <CardTitle className="font-bold text-neutral-300 ">
-          PayAza Wallet Activity
+          TapPay Wallet Activity
         </CardTitle>
         <CardDescription>Income vs Expenses</CardDescription>
 

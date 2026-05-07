@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "PowerShell(Test-Path 'c:\\\\Users\\\\ADMIN\\\\Documents\\\\nfc_fr\\\\payAza\\\\node_modules'; if \\(Test-Path 'c:\\\\Users\\\\ADMIN\\\\Documents\\\\nfc_fr\\\\payAza\\\\node_modules'\\) { \\(Get-ChildItem 'c:\\\\Users\\\\ADMIN\\\\Documents\\\\nfc_fr\\\\payAza\\\\node_modules' -Directory | Select-Object -First 5\\).Name })"
+    ]
+  }
+}

@@ -137,16 +137,6 @@
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
 }
-
-.dark {
-  scrollbar-color: #1cc75b #0a0a0a;
-}
-
-.dark::-webkit-scrollbar {
-  width: 2px;
-  height: 2px;
-}
-
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -156,18 +146,23 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
-.dark::-webkit-scrollbar-track {
-  background: #0a0a0a;
+html,
+body {
+  scrollbar-color: #1cc75b transparent;
+  scrollbar-width: thin;
+}
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
 }
 
-.dark::-webkit-scrollbar-thumb {
-  background-color: #22c55e;
-  border-radius: 10px;
-  border: 1px solid #0a0a0a;
+::-webkit-scrollbar-track {
+  background: #000000;
 }
 
-.dark::-webkit-scrollbar-thumb:hover {
-  background-color: #16a34a;
+::-webkit-scrollbar-thumb {
+  background: #1cc75b;
+  border-radius: 999px;
 }
 
 @layer base {
