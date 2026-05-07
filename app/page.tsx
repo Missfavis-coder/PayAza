@@ -66,7 +66,7 @@ const chartConfig = {
   },
 } satisfies ChartConfig;
 
-export default function PayazaLanding() {
+export default function TapPayLanding() {
   const isMobile = useIsMobile();
   const [timeRange, setTimeRange] = React.useState("90d");
   React.useEffect(() => {
@@ -89,7 +89,7 @@ export default function PayazaLanding() {
     <div className="bg-black dark text-white min-h-screen font-sans">
       {/* Navbar */}
       <header className="sticky top-0 z-50 flex justify-between items-center px-8 py-5 border-b border-gray-800 bg-black/80 backdrop-blur-md">
-        <h1 className="text-2xl font-bold text-green-400">PayAza</h1>
+        <h1 className="text-2xl font-bold text-green-400">TapPay</h1>
 
         <nav className="space-x-6 hidden md:block">
           <a href="#features" className="hover:text-green-400 transition">
@@ -126,11 +126,11 @@ export default function PayazaLanding() {
       <section className="px-8 py-24 grid md:grid-cols-2 gap-10 items-center">
         <div>
           <h2 className="text-5xl font-bold leading-tight">
-            Smarter Payments with PayAza
+            Smarter Payments with TapPay
           </h2>
           <p className="text-gray-400 mt-6 text-lg">
-            PayAza gives you a powerful wallet system with real-time analytics,
-            seamless TapPay integration, and secure global transactions.
+            TapPay gives you a powerful wallet system with real-time analytics,
+            seamless PayAza integration, and secure global transactions.
           </p>
           <div className="mt-8 flex gap-4">
             <Link href={"/auth/login"}>
@@ -296,7 +296,7 @@ export default function PayazaLanding() {
             Trusted by growing businesses
           </h2>
           <p className="text-gray-400 mb-16">
-            Reliable infrastructure powered by TapPay, built for scale and
+            Reliable infrastructure powered by PayAza, built for scale and
             performance.
           </p>
 
@@ -308,7 +308,7 @@ export default function PayazaLanding() {
                 sub: "Highly reliable infrastructure",
               },
               { num: "1M+", label: "Transactions", sub: "Processed securely" },
-              { num: "500+", label: "Businesses", sub: "Trust PayAza daily" },
+              { num: "500+", label: "Businesses", sub: "Trust TapPay daily" },
               { num: "24/7", label: "Support", sub: "Always available" },
             ].map((stat, i) => (
               <div
@@ -355,8 +355,8 @@ export default function PayazaLanding() {
                 icon: "💳",
               },
               {
-                title: "TapPay Integration",
-                desc: "Seamlessly accept payments, process transactions, and handle payouts using TapPay’s secure infrastructure.",
+                title: "PayAza Integration",
+                desc: "Seamlessly accept payments, process transactions, and handle payouts using PayAza’s secure infrastructure.",
                 icon: "🌍",
               },
               {
@@ -403,7 +403,7 @@ export default function PayazaLanding() {
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold">How It Works</h2>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Get started with PayAza in minutes and begin processing payments
+              Get started with TapPay in minutes and begin processing payments
               with ease.
             </p>
           </div>
@@ -412,12 +412,12 @@ export default function PayazaLanding() {
             {[
               {
                 title: "Create Your Account",
-                desc: "Sign up in minutes and set up your PayAza wallet to start managing your finances.",
+                desc: "Sign up in minutes and set up your TapPay wallet to start managing your finances.",
                 icon: "👤",
               },
               {
-                title: "Connect TapPay",
-                desc: "Integrate TapPay using our developer-friendly APIs and dashboard tools.",
+                title: "Connect PayAza",
+                desc: "Integrate PayAza using our developer-friendly APIs and dashboard tools.",
                 icon: "🔗",
               },
               {
@@ -519,7 +519,7 @@ export default function PayazaLanding() {
               What Our Users Say
             </h2>
             <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-              Businesses and individuals trust PayAza to power their payments
+              Businesses and individuals trust TapPay to power their payments
               every day.
             </p>
           </div>
@@ -529,7 +529,7 @@ export default function PayazaLanding() {
               {
                 name: "Modred O.",
                 role: "Startup Founder",
-                text: "PayAza made it incredibly easy for us to start accepting payments globally. The TapPay integration is seamless.",
+                text: "TapPay made it incredibly easy for us to start accepting payments globally. The PayAza integration is seamless.",
                 avatar: "https://i.pravatar.cc/100?img=1",
               },
               {
@@ -576,28 +576,28 @@ export default function PayazaLanding() {
         <div className="max-w-3xl mx-auto space-y-4">
           {[
             {
-              q: "What is PayAza?",
-              a: "PayAza is a modern payment platform that helps individuals and businesses manage wallets, track transactions, and process payments efficiently using TapPay infrastructure.",
+              q: "What is TapPay?",
+              a: "TapPay is a modern payment platform that helps individuals and businesses manage wallets, track transactions, and process payments efficiently using PayAza infrastructure.",
             },
             {
-              q: "How does TapPay integration work?",
-              a: "PayAza connects directly to TapPay APIs, allowing you to accept payments, send payouts, and manage transactions securely from one dashboard.",
+              q: "How does PayAza integration work?",
+              a: "TapPay connects directly to PayAza APIs, allowing you to accept payments, send payouts, and manage transactions securely from one dashboard.",
             },
             {
-              q: "Is PayAza secure?",
-              a: "Yes. PayAza uses encryption, secure APIs, and continuous monitoring to ensure all transactions and user data are protected.",
+              q: "Is TapPay secure?",
+              a: "Yes. TapPay uses encryption, secure APIs, and continuous monitoring to ensure all transactions and user data are protected.",
             },
             {
-              q: "Who can use PayAza?",
-              a: "PayAza is built for individuals, startups, and businesses that need a reliable way to manage and process payments.",
+              q: "Who can use TapPay?",
+              a: "TapPay is built for individuals, startups, and businesses that need a reliable way to manage and process payments.",
             },
             {
               q: "Can I track my transactions in real-time?",
-              a: "Absolutely. PayAza provides real-time analytics and transaction tracking so you always know what’s happening with your money.",
+              a: "Absolutely. TapPay provides real-time analytics and transaction tracking so you always know what’s happening with your money.",
             },
             {
               q: "How do I get started?",
-              a: "Simply create an account, connect your TapPay integration, and start sending or receiving payments instantly.",
+              a: "Simply create an account, connect your PayAza integration, and start sending or receiving payments instantly.",
             },
           ].map((item, i) => {
             const [open, setOpen] = React.useState(false);
@@ -628,10 +628,10 @@ export default function PayazaLanding() {
       <section className="px-8 py-24 bg-gray-950 text-center">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-white">
-            Start using PayAza today
+            Start using TapPay today
           </h2>
           <p className="mt-4 text-gray-400 text-lg">
-            Simple. Secure. Fast payments powered by TapPay.
+            Simple. Secure. Fast payments powered by PayAza.
           </p>
 
           <div className="mt-8 flex justify-center">
@@ -670,9 +670,9 @@ export default function PayazaLanding() {
         <div className="max-w-6xl mx-auto grid md:grid-cols-4 gap-10 text-sm">
           {/* Brand */}
           <div>
-            <h3 className="text-white text-lg font-bold mb-4">PayAza</h3>
+            <h3 className="text-white text-lg font-bold mb-4">TapPay</h3>
             <p className="text-gray-500">
-              Secure, fast, and reliable payments powered by TapPay. Built for
+              Secure, fast, and reliable payments powered by PayAza. Built for
               modern businesses.
             </p>
           </div>
@@ -748,7 +748,7 @@ export default function PayazaLanding() {
         </div>
 
         <div className="mt-12 border-t border-gray-800 pt-6 text-center text-gray-600 text-xs">
-          © {new Date().getFullYear()} PayAza. All rights reserved.
+          © {new Date().getFullYear()} TapPay. All rights reserved.
         </div>
       </footer>
     </div>

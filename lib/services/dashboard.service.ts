@@ -8,6 +8,7 @@ import type {
   NotificationsResponse,
   MarkNotificationReadResponse,
   MarkAllNotificationsReadResponse,
+  UnreadCountResponse,
   WalletBalanceResponse,
 } from "@/lib/types/api";
 
@@ -65,8 +66,8 @@ export const dashboardService = {
       return apiClient.get("/notifications", { params });
     },
 
-    async getUnreadCount(): Promise<{ count: number }> {
-      return apiClient.get("/notifications/unread/count");
+    async getUnreadCount(): Promise<UnreadCountResponse> {
+      return apiClient.get<UnreadCountResponse>("/notifications/unread/count");
     },
 
     async markAsRead(id: string): Promise<MarkNotificationReadResponse> {

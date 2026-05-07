@@ -35,4 +35,19 @@ export const queryKeys = {
     unreadCount: () =>
       ["notifications", "unread-count"] as const,
   },
+
+  analytics: {
+    me: () => ["analytics", "me"] as const,
+    admin: () => ["analytics", "admin"] as const,
+    adminUsers: (params?: any) =>
+      ["analytics", "admin", "users", params] as const,
+    adminUser: (id: string) =>
+      ["analytics", "admin", "users", id] as const,
+  },
+
+  charts: {
+    spending: (period: string) => ["charts", "spending", period] as const,
+    transfers: (period: string) => ["charts", "transfers", period] as const,
+    topups: (period: string) => ["charts", "topups", period] as const,
+  },
 };

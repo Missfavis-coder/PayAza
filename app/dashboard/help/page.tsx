@@ -1,35 +1,48 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { MessageCircle, Mail, ShieldAlert } from "lucide-react";
+import {
+  ChevronDown,
+  ChevronUp,
+  Mail,
+  MessageCircle,
+  ShieldAlert,
+} from "lucide-react";
+
+import { LiveChatDialog } from "@/components/support/LiveChatDialog";
+import { EmailSupportDialog } from "@/components/support/EmailSupportDialog";
+import { ReportFraudDialog } from "@/components/support/ReportFraudDialog";
+import { cn } from "@/lib/utils";
+
+const COMMON_ISSUES: { question: string; answer: string }[] = [
+  {
+    question: "Payment not received",
+    answer:
+      "Payments typically reflect within 5 minutes. If not received after 30 minutes, contact support.",
+  },
+  {
+    question: "Failed transaction reversal",
+    answer: "Failed transactions are automatically reversed within 24 hours.",
+  },
+  {
+    question: "Incorrect balance update",
+    answer:
+      "Pull down to refresh your balance. If the issue persists, contact support.",
+  },
+  {
+    question: "Account verification problems",
+    answer:
+      "Ensure your details match your BVN. Contact support if the issue continues.",
+  },
+];
 
 export default function HelpPage() {
-  const [loading, setLoading] = useState(true);
-  const [query, setQuery] = useState("");
-  const [focused, setFocused] = useState(false);
-  const helpItems = [
-    "Payment not received",
-    "Failed transaction reversal",
-    "Incorrect balance update",
-    "Account verification problems",
-    "How long do transfers take?",
-    "How to secure my account?",
-  ];
-  const filteredItems = helpItems.filter((item) =>
-    item.toLowerCase().includes(query.toLowerCase()),
-  );
-
-  useEffect(() => {
-    const t = setTimeout(() => setLoading(false), 1200);
-    return () => clearTimeout(t);
-  }, []);
+  const [reportSubmitted, setReportSubmitted] = useState(false);
 
   return (
     <div className="flex flex-col flex-1 bg-background px-4 md:px-6 py-6 gap-6">
-      {/* HEADER */}
       <div className="space-y-1">
         <h1 className="text-xl font-semibold">Help Center</h1>
         <p className="text-sm text-muted-foreground">
@@ -37,53 +50,14 @@ export default function HelpPage() {
         </p>
       </div>
 
-      {/* SEARCH (PRIMARY ENTRY POINT) */}
-      {/* <Card
-        className="relative overflow-visible z-50"
-        onMouseLeave={() => setFocused(false)}
-       
-      >
-        <CardHeader>
-          <CardTitle>Search for help</CardTitle>
-        </CardHeader>
-
-        <CardContent>
-          <div className="relative">
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-               onMouseEnter={() => setFocused(true)}
-              onBlur={() => setTimeout(() => setFocused(false), 150)}
-              placeholder="Search payments, transfers, account issues..."
-              className="outline-none border-neutral-800 border w-full rounded-md p-3 focus:ring-1 focus:ring-[#00CF7B]"
-            />
-
-            
-            {focused && (
-              <div className="absolute left-0 right-0 top-full mt-2 z-[9999] bg-black/95 border border-white/10 rounded-lg shadow-xl overflow-hidden">
-                {filteredItems.length > 0 ? (
-                  filteredItems.map((item, i) => (
-                    <div
-                      key={i}
-                       onMouseDown={() => setQuery(item)}
-                      className="px-3 py-2 text-sm text-muted-foreground hover:text-white hover:bg-white/5 cursor-pointer"
-                    >
-                      {item}
-                    </div>
-                  ))
-                ) : (
-                  <div className="px-3 py-2 text-sm text-muted-foreground">
-                    No results found
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        </CardContent>
-      </Card> */}
+      {reportSubmitted ? (
+        <div className="rounded-lg border border-rose-500/30 bg-rose-500/5 px-4 py-3 text-sm text-rose-200">
+          Your fraud report has been received. Our team will contact you within
+          24 hours.
+        </div>
+      ) : null}
 
       <div className="grid lg:grid-cols-3 gap-6">
-        {/* MAIN SUPPORT ACTIONS */}
         <div className="lg:col-span-2 space-y-6">
           <Card>
             <CardHeader>
@@ -91,19 +65,33 @@ export default function HelpPage() {
             </CardHeader>
 
             <CardContent className="space-y-3">
-              <SupportAction
+              <SupportRow
                 icon={<MessageCircle size={18} />}
                 title="Live Chat"
                 desc="Get instant help from support"
-                action="Start"
-              />
+              >
+                <LiveChatDialog
+                  trigger={
+                    <Button size="sm" variant="outline">
+                      Start
+                    </Button>
+                  }
+                />
+              </SupportRow>
 
-              <SupportAction
+              <SupportRow
                 icon={<Mail size={18} />}
                 title="Email Support"
-                desc="support@payaza.com"
-                action="Email"
-              />
+                desc="support@tappay.com"
+              >
+                <EmailSupportDialog
+                  trigger={
+                    <Button size="sm" variant="outline">
+                      Email
+                    </Button>
+                  }
+                />
+              </SupportRow>
             </CardContent>
           </Card>
 
@@ -112,16 +100,14 @@ export default function HelpPage() {
               <CardTitle>Common Issues</CardTitle>
             </CardHeader>
 
-            <CardContent className="space-y-2">
-              <IssueItem text="Payment not received" />
-              <IssueItem text="Failed transaction reversal" />
-              <IssueItem text="Incorrect balance update" />
-              <IssueItem text="Account verification problems" />
+            <CardContent className="space-y-1">
+              {COMMON_ISSUES.map((item, i) => (
+                <IssueItem key={i} {...item} />
+              ))}
             </CardContent>
           </Card>
         </div>
 
-        {/* RIGHT SIDE (CRITICAL ACTIONS ONLY) */}
         <div className="space-y-6">
           <Card className="border-red-500/20">
             <CardHeader>
@@ -136,9 +122,14 @@ export default function HelpPage() {
                 Use this if you suspect unauthorized activity on your account.
               </p>
 
-              <Button variant="destructive" className="w-full">
-                Report Fraud
-              </Button>
+              <ReportFraudDialog
+                onSubmitted={() => setReportSubmitted(true)}
+                trigger={
+                  <Button variant="destructive" className="w-full">
+                    Report Fraud
+                  </Button>
+                }
+              />
             </CardContent>
           </Card>
         </div>
@@ -146,16 +137,17 @@ export default function HelpPage() {
     </div>
   );
 }
-function SupportAction({
+
+function SupportRow({
   icon,
   title,
   desc,
-  action,
+  children,
 }: {
   icon: React.ReactNode;
   title: string;
   desc: string;
-  action: string;
+  children: React.ReactNode;
 }) {
   return (
     <div className="flex items-center justify-between p-3 rounded-lg border border-white/10">
@@ -166,17 +158,38 @@ function SupportAction({
           <p className="text-xs text-muted-foreground">{desc}</p>
         </div>
       </div>
-
-      <Button size="sm" variant="outline">
-        {action}
-      </Button>
+      {children}
     </div>
   );
 }
-function IssueItem({ text }: { text: string }) {
+
+function IssueItem({
+  question,
+  answer,
+}: {
+  question: string;
+  answer: string;
+}) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="text-sm py-2 border-b border-white/10 last:border-0 text-muted-foreground hover:text-white transition">
-      {text}
-    </div>
+    <button
+      type="button"
+      onClick={() => setOpen((v) => !v)}
+      className={cn(
+        "w-full text-left text-sm py-2 border-b border-white/10 last:border-0 transition",
+        "hover:text-white",
+        open ? "text-white" : "text-muted-foreground",
+      )}
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span>{question}</span>
+        {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+      </div>
+      {open ? (
+        <p className="text-xs text-neutral-400 mt-2 leading-relaxed">
+          {answer}
+        </p>
+      ) : null}
+    </button>
   );
 }

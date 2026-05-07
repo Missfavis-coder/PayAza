@@ -21,12 +21,18 @@ export interface WalletBalanceResponse {
 
 /* ---------------- TRANSACTIONS ---------------- */
 
-export type TransactionType = "SUCCESS" | "PENDING" | "FAILED";
+export type TransactionType = "CREDIT" | "DEBIT";
+export type TransactionStatus =
+  | "SUCCESS"
+  | "COMPLETED"
+  | "PENDING"
+  | "FAILED";
 
 export interface Transaction {
   id: string;
   description: string | null;
   type: TransactionType;
+  status?: TransactionStatus;
   amount: number; // NGN
   walletId: string;
   reference: string | null;
@@ -73,38 +79,6 @@ export interface DashboardOverviewResponse {
   };
 
   recentActivity: RecentActivity[];
-}
-
-/* ---------------- NOTIFICATIONS ---------------- */
-
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  read: boolean;
-  createdAt: string;
-}
-
-export interface NotificationsParams {
-  page?: number;
-  limit?: number;
-}
-
-export interface NotificationsResponse {
-  data: Notification[];
-  meta: {
-    page: number;
-    limit: number;
-    total: number;
-  };
-}
-
-export interface MarkNotificationReadResponse {
-  success: boolean;
-}
-
-export interface MarkAllNotificationsReadResponse {
-  success: boolean;
 }
 
 /* ---------------- TRANSFER ---------------- */

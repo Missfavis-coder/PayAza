@@ -16,6 +16,7 @@ import {
 import { LogOut, Settings, CreditCard, Bell } from "lucide-react";
 import Link from "next/link";
 import { useAuth } from "@/lib/hooks/use-auth";
+import { useUnreadNotificationsCount } from "@/lib/hooks/use-dashboard";
 
 
 function HeaderSkeleton() {
@@ -40,6 +41,8 @@ function HeaderSkeleton() {
 
 export function SiteHeader() {
   const { user, isLoading, logout, isLoggingOut } = useAuth();
+  const { data: unreadData } = useUnreadNotificationsCount();
+  const unreadCount = unreadData?.count ?? 0;
   const path = usePathname();
   const last = path.split("/").pop();
 
@@ -71,9 +74,11 @@ export function SiteHeader() {
           <Link href="/dashboard/notification">
             <Button variant="ghost" className="relative h-8 w-8 rounded-full">
               <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-semibold text-white">
-                1
-              </span>
+              {unreadCount > 0 ? (
+                <span className="absolute -top-1 -right-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-semibold text-white">
+                  {unreadCount > 99 ? "99+" : unreadCount}
+                </span>
+              ) : null}
             </Button>
           </Link>
 
