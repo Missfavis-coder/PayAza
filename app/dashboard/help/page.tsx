@@ -38,7 +38,7 @@ export default function HelpPage() {
       </div>
 
       {/* SEARCH (PRIMARY ENTRY POINT) */}
-      <Card
+      {/* <Card
         className="relative overflow-visible z-50"
         onMouseLeave={() => setFocused(false)}
        
@@ -58,7 +58,7 @@ export default function HelpPage() {
               className="outline-none border-neutral-800 border w-full rounded-md p-3 focus:ring-1 focus:ring-[#00CF7B]"
             />
 
-            {/* DROPDOWN */}
+            
             {focused && (
               <div className="absolute left-0 right-0 top-full mt-2 z-[9999] bg-black/95 border border-white/10 rounded-lg shadow-xl overflow-hidden">
                 {filteredItems.length > 0 ? (
@@ -80,7 +80,7 @@ export default function HelpPage() {
             )}
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       <div className="grid lg:grid-cols-3 gap-6">
         {/* MAIN SUPPORT ACTIONS */}
