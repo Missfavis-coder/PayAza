@@ -18,7 +18,7 @@ export default function Page() {
       <TestimonialsPage />
       <FAQPage />
       <Footer />
-      hello
+      
     </div>
   );
 }

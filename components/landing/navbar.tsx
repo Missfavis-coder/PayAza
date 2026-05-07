@@ -14,7 +14,6 @@ export default function Header() {
 
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
-  
   const navigationLink = [
     { name: "Features", link: "#features" },
     { name: "How it Works", link: "#how-it-works" },
@@ -25,10 +24,19 @@ export default function Header() {
   return (
     <header className="fixed top-6 left-0 right-0 z-50 px-4">
       <div className="max-w-7xl mx-auto px-5 py-4 flex items-center justify-between rounded-full border border-neutral-800 bg-black/70 backdrop-blur-lg">
-
         {/* LOGO */}
-        <Link href="/" className="font-bold text-lg text-[#00CF7B]">
-          TapPay
+        <Link
+          href="/"
+          className="flex items-center  gap-1 font-bold text-lg text-white"
+        >
+          <img
+            src="/logo-nobg.png"
+            alt="TapPay Logo"
+            className="w-7 object-contain"
+          />
+          <p>
+            Tap<span className="text-green-400">Pay</span>
+          </p>{" "}
         </Link>
 
         {/* DESKTOP NAV */}
@@ -56,15 +64,18 @@ export default function Header() {
             onClick={() => {
               router.push(isAuthenticated ? "/dashboard" : "auth/login");
               toggleMenu();
-          }}
+            }}
             className="px-5 py-2 text-sm cursor-pointer bg-[#00CF7B] text-white rounded-full font-semibold hover:bg-[#00CF7B] transition"
           >
-               {isAuthenticated ? "Dashboard" : "Sign In"}
+            {isAuthenticated ? "Dashboard" : "Sign In"}
           </button>
         </div>
 
         {/* MOBILE MENU BUTTON */}
-        <button onClick={toggleMenu} className="md:hidden cursor-pointer text-white">
+        <button
+          onClick={toggleMenu}
+          className="md:hidden cursor-pointer text-white"
+        >
           <svg
             className="w-6 h-6"
             fill="none"
@@ -100,15 +111,14 @@ export default function Header() {
             className="absolute top-0 left-0 right-0 bg-black border border-neutral-800  p-6 space-y-4"
             onClick={(e) => e.stopPropagation()}
           >
-
-         <div className="flex justify-end">
-        <button
-          onClick={toggleMenu}
-          className="text-neutral-300 hover:text-[#00CF7B] transition cursor-pointer"
-        >
-          <X className="w-6 h-6" />
-        </button>
-      </div>
+            <div className="flex justify-end">
+              <button
+                onClick={toggleMenu}
+                className="text-neutral-300 hover:text-[#00CF7B] transition cursor-pointer"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
             {/* LINKS */}
             <nav className="flex flex-col space-y-4 text-neutral-300">
               {navigationLink.map(({ name, link }, index) => {
@@ -134,11 +144,11 @@ export default function Header() {
               <button
                 onClick={() => {
                   router.push(isAuthenticated ? "/dashboard" : "/auth/login");
-                            toggleMenu();
-                                                    }}
+                  toggleMenu();
+                }}
                 className="w-full py-3 cursor-pointer bg-[#00CF7B] text-white rounded-xl font-semibold hover:bg-green-400 transition"
               >
-                   {isAuthenticated ? "Dashboard" : "Sign In"}
+                {isAuthenticated ? "Dashboard" : "Sign In"}
               </button>
             </div>
           </div>

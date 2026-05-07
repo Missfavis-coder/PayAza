@@ -17,7 +17,12 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
 };
-
+export const metadata = {
+  title: "TapPay",
+  icons: {
+    icon: "/logo.png",
+  },
+};
 
 export default function RootLayout({
   children,
@@ -25,18 +30,16 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${instrumentSans.variable} `} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${instrumentSans.variable} `}
+      suppressHydrationWarning
+    >
       <body className={`${instrumentSans.className}`}>
-          
-          
-          <Providers> 
-          
-          
-          
-          
-              {children}
-              <Toaster position="top-center" />
-              </Providers>
+        <Providers>
+          {children}
+          <Toaster position="top-center" />
+        </Providers>
       </body>
     </html>
   );

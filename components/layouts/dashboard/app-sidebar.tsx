@@ -91,17 +91,29 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               <SidebarMenuButton asChild>
                 <div className="flex items-center gap-2">
                   {/* ICON CHANGES WHEN COLLAPSED */}
-                  <div className="bg-[#00CF7B] text-white p-3 rounded-md">
+                  <div className=" text-white">
                     {isCollapsed ? (
-                      <WalletCards size={18} />
+                      <div className="w-8.5 h-11 mt rounded-xl bg-[#00CF7B]/15 flex items-center justify-center">
+                        <img
+                          src="/logo-nobg.png"
+                          className="h-8.5 p-1 rounded-sm"
+                          alt=""
+                        />
+                      </div>
                     ) : (
-                      <WalletCards size={18} />
+                      <img
+                        src="/logo-nobg.png"
+                        alt="TapPay Logo"
+                        className="w-7 object-contain"
+                      />
                     )}
                   </div>
 
                   {/* TEXT ONLY WHEN EXPANDED */}
                   {!isCollapsed && (
-                    <span className="text-xl font-bold">TapPay</span>
+                    <span className="text-xl font-bold">
+                      Tap<span className="text-green-400">Pay</span>
+                    </span>
                   )}
                 </div>
               </SidebarMenuButton>
